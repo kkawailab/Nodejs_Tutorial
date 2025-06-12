@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Node.jsの基本概念から実践的な使い方まで、初心者向けに分かりやすく解説します。">
+    <meta name="keywords" content="Node.js, Express.js, JavaScript, チュートリアル, 初心者, 日本語">
+    <meta name="author" content="Node.js Tutorial">
+    <title>Node.js 初心者向けチュートリアル</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            color: #2c3e50;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+        h1 {
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 5px;
+        }
+        code {
+            background-color: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: #e83e8c;
+        }
+        pre {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 1rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        pre code {
+            background-color: transparent;
+            padding: 0;
+            color: inherit;
+        }
+        .table-of-contents {
+            background-color: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+        .table-of-contents h2 {
+            margin-top: 0;
+            color: #495057;
+            border-bottom: none;
+        }
+        .table-of-contents ul {
+            margin-bottom: 0;
+        }
+        .alert {
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        .card {
+            border: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 1rem;
+        }
+        .btn-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        blockquote {
+            border-left: 4px solid #3498db;
+            padding-left: 1rem;
+            margin: 1rem 0;
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 0 8px 8px 0;
+        }
+        .badge {
+            font-size: 0.8em;
+        }
+        .highlight {
+            background-color: #fff3cd;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+    </style>
+
+    <link href="assets/css/style.css" rel="stylesheet">
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        .breadcrumb-nav {
+            background: #f8f9fa;
+            padding: 1rem 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .breadcrumb {
+            background: none;
+            padding: 0;
+            margin: 0;
+        }
+        .breadcrumb-item + .breadcrumb-item::before {
+            content: ">";
+            color: #6c757d;
+        }
+        .breadcrumb-item a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        .breadcrumb-item a:hover {
+            text-decoration: underline;
+        }
+        .breadcrumb-item.active {
+            color: #6c757d;
+        }
+        body {
+            padding-top: 0;
+        }
+        main {
+            padding-top: 2rem;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.25rem 0.5rem;
+            border-radius: 3px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .copy-btn:hover {
+            background: var(--secondary-color);
+        }
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin: 3rem 0;
+            padding: 2rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            background: var(--gradient);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            color: white;
+        }
+        .nav-btn.disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        .nav-btn.disabled:hover {
+            transform: none;
+            box-shadow: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <a href="index.html" class="logo">Node.js Tutorial</a>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">ホーム</a></li>
+                <li><a href="nodejs-tutorial.html" class="nav-link">Node.js</a></li>
+                <li><a href="express-tutorial.html" class="nav-link">Express.js</a></li>
+                <li><a href="https://nodejs.org/" target="_blank" class="nav-link">Node.js公式</a></li>
+            </ul>
+            <button class="nav-toggle" aria-label="メニューを開く">
+                <i class="fas fa-bars"></i>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb-nav" style="background: #f8f9fa; padding: 1rem 0; border-bottom: 1px solid #dee2e6;">
+        <main>
+<div class="container">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="index.html">ホーム</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Node.js 初心者向けチュートリアル</li>
+            </ol>
+        </div>
+</main>
+    </nav>
+    <div class="container">
+        <hundefined id="object-object">[object Object]</hundefined><hundefined id="object-object">[object Object]</hundefined><ol>
+<li><a href="#nodejs-%E3%81%A8%E3%81%AF">Node.jsとは</a></li>
+<li><a href="#%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB">インストール</a></li>
+<li><a href="#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5">基本概念</a></li>
+<li><a href="#%E6%9C%80%E5%88%9D%E3%81%AE%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0">最初のプログラム</a></li>
+<li><a href="#%E3%83%A2%E3%82%B8%E3%83%A5%E3%83%BC%E3%83%AB%E3%82%B7%E3%82%B9%E3%83%86%E3%83%A0">モジュールシステム</a></li>
+<li><a href="#%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E6%93%8D%E4%BD%9C">ファイル操作</a></li>
+<li><a href="#http-%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC">HTTP サーバー</a></li>
+<li><a href="#npm-%E3%83%91%E3%83%83%E3%82%B1%E3%83%BC%E3%82%B8%E7%AE%A1%E7%90%86">npm パッケージ管理</a></li>
+<li><a href="#expressjs-%E5%85%A5%E9%96%80">Express.js 入門</a></li>
+<li><a href="#%E6%AC%A1%E3%81%AE%E3%82%B9%E3%83%86%E3%83%83%E3%83%97">次のステップ</a></li>
+</ol>
+<hundefined id="object-object">[object Object]</hundefined><p>Node.jsは、Chrome V8 JavaScriptエンジンで動作するJavaScriptランタイム環境です。ブラウザの外でJavaScriptを実行でき、サーバーサイド開発やツール作成に使用されます。</p>
+<hundefined id="object-object">[object Object]</hundefined><ul>
+<li><strong>非同期I/O</strong>: ブロッキングしない処理</li>
+<li><strong>イベント駆動</strong>: イベントループによる効率的な処理</li>
+<li><strong>軽量</strong>: 高いパフォーマンス</li>
+<li><strong>豊富なエコシステム</strong>: npmパッケージの充実</li>
+</ul>
+<hundefined id="object-object">[object Object]</hundefined><hundefined id="object-object">[object Object]</hundefined><ol>
+<li><a href="https://nodejs.org/">Node.js公式サイト</a> にアクセス</li>
+<li>LTS版（推奨版）をダウンロード</li>
+<li>インストーラーを実行</li>
+</ol>
+<hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><hundefined id="object-object">[object Object]</hundefined><p>Node.jsでは非同期処理が基本です。</p>
+<pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><hundefined id="object-object">[object Object]</hundefined><p><code>hello.js</code> ファイルを作成：</p>
+<pre><code class="language-javascript">[object Object]</code></pre><p>実行：</p>
+<pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><p><code>math.js</code>:</p>
+<pre><code class="language-javascript">[object Object]</code></pre><p><code>main.js</code>:</p>
+<pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><p><code>package.json</code> に <code>&quot;type&quot;: &quot;module&quot;</code> を追加</p>
+<p><code>math.mjs</code>:</p>
+<pre><code class="language-javascript">[object Object]</code></pre><p><code>main.mjs</code>:</p>
+<pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><p><code>math.test.js</code>:</p>
+<pre><code class="language-javascript">[object Object]</code></pre><p><code>package.json</code>:</p>
+<pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><hundefined id="object-object">[object Object]</hundefined><ol>
+<li><p><strong>データベース連携</strong></p>
+<ul>
+<li>MongoDB (Mongoose)</li>
+<li>MySQL/PostgreSQL (Sequelize, Prisma)</li>
+<li>Redis</li>
+</ul>
+</li>
+<li><p><strong>認証・認可</strong></p>
+<ul>
+<li>JWT (JSON Web Tokens)</li>
+<li>Passport.js</li>
+<li>OAuth 2.0</li>
+</ul>
+</li>
+<li><p><strong>リアルタイム通信</strong></p>
+<ul>
+<li>WebSocket</li>
+<li>Socket.io</li>
+</ul>
+</li>
+<li><p><strong>マイクロサービス</strong></p>
+<ul>
+<li>Docker</li>
+<li>Kubernetes</li>
+<li>API Gateway</li>
+</ul>
+</li>
+<li><p><strong>パフォーマンス最適化</strong></p>
+<ul>
+<li>クラスタリング</li>
+<li>キャッシング</li>
+<li>ロードバランシング</li>
+</ul>
+</li>
+</ol>
+<hundefined id="object-object">[object Object]</hundefined><ul>
+<li><a href="https://nodejs.org/docs/">Node.js 公式ドキュメント</a></li>
+<li><a href="https://expressjs.com/">Express.js ガイド</a></li>
+<li><a href="https://developer.mozilla.org/ja/docs/Web/JavaScript">MDN Web Docs - JavaScript</a></li>
+<li><a href="https://www.npmjs.com/">npmjs.com</a></li>
+</ul>
+<hundefined id="object-object">[object Object]</hundefined><ol>
+<li><p><strong>ブログシステム</strong></p>
+<ul>
+<li>CRUD操作</li>
+<li>ユーザー認証</li>
+<li>ファイルアップロード</li>
+</ul>
+</li>
+<li><p><strong>チャットアプリケーション</strong></p>
+<ul>
+<li>リアルタイム通信</li>
+<li>ユーザー管理</li>
+<li>メッセージ履歴</li>
+</ul>
+</li>
+<li><p><strong>REST API</strong></p>
+<ul>
+<li>データベース連携</li>
+<li>認証機能</li>
+<li>API ドキュメント</li>
+</ul>
+</li>
+<li><p><strong>コマンドラインツール</strong></p>
+<ul>
+<li>ファイル処理</li>
+<li>外部API連携</li>
+<li>設定管理</li>
+</ul>
+</li>
+</ol>
+<hundefined id="object-object">[object Object]</hundefined><p>このチュートリアルでは、Node.jsの基本的な概念から実践的な開発まで幅広くカバーしました。Node.jsは強力で柔軟な技術ですが、継続的な学習と実践が重要です。</p>
+<p>重要なポイント：</p>
+<ul>
+<li><strong>非同期プログラミング</strong>を理解する</li>
+<li><strong>モジュールシステム</strong>を活用する</li>
+<li><strong>エラーハンドリング</strong>を適切に行う</li>
+<li><strong>セキュリティ</strong>を常に意識する</li>
+<li><strong>テスト</strong>を書く習慣をつける</li>
+</ul>
+<p>Node.jsエコシステムは急速に進歩しているため、公式ドキュメントや最新のベストプラクティスを定期的に確認することをお勧めします。</p>
+<p>頑張って学習を続けてください！🚀</p>
+
+        
+        <button type="button" class="btn btn-primary btn-top" onclick="scrollToTop()">
+            ↑ トップへ
+        </button>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script>
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+        
+        // 目次のリンクにスムーススクロールを追加
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // コードブロックの言語指定
+        document.querySelectorAll('pre code').forEach((block) => {
+            if (!block.className.includes('language-')) {
+                block.className += ' language-javascript';
+            }
+        });
+    </script>
+    <div class="navigation-buttons">
+        <a href="index.html" class="nav-btn">
+            <i class="fas fa-home"></i> ホーム
+        </a>
+        <a href="express-tutorial.html" class="nav-btn">
+            Express.js Tutorial <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="index.html" class="footer-link">ホーム</a>
+                <a href="nodejs-tutorial.html" class="footer-link">Node.js Tutorial</a>
+                <a href="express-tutorial.html" class="footer-link">Express.js Tutorial</a>
+                <a href="https://nodejs.org/" target="_blank" class="footer-link">Node.js 公式</a>
+                <a href="https://expressjs.com/" target="_blank" class="footer-link">Express.js 公式</a>
+                <a href="https://github.com/nodejs/node" target="_blank" class="footer-link">GitHub</a>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 Node.js Tutorial. このチュートリアルは学習目的で作成されました。</p>
+                <p>
+                    <i class="fas fa-heart" style="color: #e74c3c;"></i> 
+                    Made with Node.js and Express.js
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button class="back-to-top" aria-label="トップへ戻る">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+
+    <script src="assets/js/main.js"></script>
+    <script>
+        // Progress tracking
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPage = window.location.pathname.split('/').pop();
+            let progress = JSON.parse(localStorage.getItem('tutorialProgress') || '{}');
+            
+            // Mark current page as visited
+            progress[currentPage] = Math.max(progress[currentPage] || 0, 25);
+            
+            // Update progress when user scrolls
+            let maxScroll = 0;
+            window.addEventListener('scroll', function() {
+                const scrollPercent = Math.round((window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100);
+                maxScroll = Math.max(maxScroll, scrollPercent);
+                progress[currentPage] = Math.max(progress[currentPage], Math.min(maxScroll, 100));
+                localStorage.setItem('tutorialProgress', JSON.stringify(progress));
+            });
+        });
+    </script>
+</body>
+</html>
