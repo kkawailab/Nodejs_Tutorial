@@ -7,137 +7,251 @@
     <meta name="keywords" content="Node.js, Express.js, JavaScript, チュートリアル, 初心者, 日本語">
     <meta name="author" content="Node.js Tutorial">
     <title>Express.js 初心者向けチュートリアル</title>
+    
+    <!-- Stylesheets -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <link href="assets/css/style.css" rel="stylesheet">
+    
     <style>
+        :root {
+            --primary-color: #339933;
+            --secondary-color: #68217a;
+            --accent-color: #f39c12;
+            --dark-color: #2c3e50;
+            --text-color: #333;
+            --border-color: #dee2e6;
+            --shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
-            color: #333;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        h1, h2, h3, h4, h5, h6 {
-            color: #2c3e50;
-            margin-top: 2rem;
-            margin-bottom: 1rem;
-        }
-        h1 {
-            border-bottom: 3px solid #3498db;
-            padding-bottom: 10px;
-        }
-        h2 {
-            border-bottom: 2px solid #e9ecef;
-            padding-bottom: 5px;
-        }
-        code {
+            color: var(--text-color);
             background-color: #f8f9fa;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.9em;
-            color: #e83e8c;
+            padding-top: 0;
         }
-        pre {
-            background-color: #f8f9fa;
-            border: 1px solid #e9ecef;
-            border-radius: 8px;
-            padding: 1rem;
-            overflow-x: auto;
-            margin: 1rem 0;
-        }
-        pre code {
-            background-color: transparent;
-            padding: 0;
-            color: inherit;
-        }
-        .table-of-contents {
-            background-color: #f8f9fa;
-            padding: 1.5rem;
-            border-radius: 8px;
-            margin-bottom: 2rem;
-        }
-        .table-of-contents h2 {
-            margin-top: 0;
-            color: #495057;
-            border-bottom: none;
-        }
-        .table-of-contents ul {
-            margin-bottom: 0;
-        }
-        .alert {
-            border-radius: 8px;
-            margin: 1rem 0;
-        }
-        .card {
-            border: none;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 1rem;
-        }
-        .btn-top {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 1000;
-        }
-        blockquote {
-            border-left: 4px solid #3498db;
-            padding-left: 1rem;
-            margin: 1rem 0;
-            background-color: #f8f9fa;
-            padding: 1rem;
-            border-radius: 0 8px 8px 0;
-        }
-        .badge {
-            font-size: 0.8em;
-        }
-        .highlight {
-            background-color: #fff3cd;
-            padding: 2px 4px;
-            border-radius: 4px;
-        }
-    </style>
-
-    <link href="assets/css/style.css" rel="stylesheet">
-    <style>
+        
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 2rem;
         }
-        .breadcrumb-nav {
-            background: #f8f9fa;
-            padding: 1rem 0;
-            border-bottom: 1px solid #dee2e6;
+        
+        main {
+            padding: 2rem 0;
+            background: white;
+            min-height: calc(100vh - 200px);
         }
-        .breadcrumb {
-            background: none;
+        
+        h1, h2, h3, h4, h5, h6 {
+            color: var(--dark-color);
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        
+        h1 {
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-top: 1rem;
+            font-size: 2.5rem;
+        }
+        
+        h2 {
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 8px;
+            font-size: 2rem;
+            color: var(--primary-color);
+        }
+        
+        h3 {
+            font-size: 1.5rem;
+            color: var(--secondary-color);
+        }
+        
+        /* コードスタイル */
+        code {
+            background-color: #f1f3f4;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: #d73a49;
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+        }
+        
+        pre {
+            background-color: #2d3748 !important;
+            border: 1px solid #4a5568;
+            border-radius: 8px;
+            padding: 1.5rem;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            position: relative;
+            box-shadow: var(--shadow);
+        }
+        
+        pre code {
+            background-color: transparent !important;
             padding: 0;
-            margin: 0;
+            color: #e2e8f0 !important;
+            font-size: 0.9rem;
+            line-height: 1.5;
         }
-        .breadcrumb-item + .breadcrumb-item::before {
-            content: ">";
-            color: #6c757d;
+        
+        /* Prism.js のカスタマイズ */
+        .token.comment,
+        .token.prolog,
+        .token.doctype,
+        .token.cdata {
+            color: #68d391;
         }
-        .breadcrumb-item a {
+        
+        .token.punctuation {
+            color: #e2e8f0;
+        }
+        
+        .token.property,
+        .token.tag,
+        .token.boolean,
+        .token.number,
+        .token.constant,
+        .token.symbol,
+        .token.deleted {
+            color: #f6e05e;
+        }
+        
+        .token.selector,
+        .token.attr-name,
+        .token.string,
+        .token.char,
+        .token.builtin,
+        .token.inserted {
+            color: #fc8181;
+        }
+        
+        .token.operator,
+        .token.entity,
+        .token.url,
+        .language-css .token.string,
+        .style .token.string {
+            color: #90cdf4;
+        }
+        
+        .token.atrule,
+        .token.attr-value,
+        .token.keyword {
+            color: #90cdf4;
+        }
+        
+        .token.function,
+        .token.class-name {
+            color: #b794f6;
+        }
+        
+        .token.regex,
+        .token.important,
+        .token.variable {
+            color: #fbb6ce;
+        }
+        
+        /* テーブルスタイル */
+        .table-responsive {
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        
+        table {
+            margin-bottom: 0;
+        }
+        
+        .table-dark th {
+            background-color: var(--dark-color) !important;
+            border-color: var(--border-color);
+        }
+        
+        /* リストスタイル */
+        ul, ol {
+            margin: 1rem 0;
+            padding-left: 2rem;
+        }
+        
+        li {
+            margin: 0.5rem 0;
+        }
+        
+        /* 目次スタイル */
+        .table-of-contents {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 2rem;
+            border-radius: 10px;
+            margin: 2rem 0;
+            border: 1px solid var(--border-color);
+        }
+        
+        .table-of-contents h2 {
+            margin-top: 0;
+            color: var(--dark-color);
+            border-bottom: none;
+            text-align: center;
+        }
+        
+        .table-of-contents ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .table-of-contents li {
+            margin: 0.3rem 0;
+        }
+        
+        .table-of-contents a {
             color: var(--primary-color);
             text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-block;
+            padding: 0.2rem 0;
         }
-        .breadcrumb-item a:hover {
+        
+        .table-of-contents a:hover {
+            color: var(--secondary-color);
             text-decoration: underline;
+            transform: translateX(5px);
         }
-        .breadcrumb-item.active {
-            color: #6c757d;
+        
+        /* ブロッククォート */
+        blockquote {
+            border-left: 4px solid var(--primary-color);
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 0 8px 8px 0;
+            position: relative;
         }
-        body {
-            padding-top: 0;
+        
+        blockquote::before {
+            content: '"';
+            font-size: 3rem;
+            color: var(--primary-color);
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            opacity: 0.3;
         }
-        main {
-            padding-top: 2rem;
+        
+        /* アラート */
+        .alert {
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            border: none;
+            box-shadow: var(--shadow);
         }
+        
+        /* コピーボタン */
         .copy-btn {
             position: absolute;
             top: 0.5rem;
@@ -146,46 +260,147 @@
             color: white;
             border: none;
             padding: 0.25rem 0.5rem;
-            border-radius: 3px;
+            border-radius: 4px;
             font-size: 0.8rem;
             cursor: pointer;
             transition: all 0.3s ease;
+            opacity: 0.8;
         }
+        
         .copy-btn:hover {
             background: var(--secondary-color);
+            opacity: 1;
         }
+        
+        /* ナビゲーションボタン */
         .navigation-buttons {
             display: flex;
             justify-content: space-between;
             margin: 3rem 0;
             padding: 2rem;
-            background: #f8f9fa;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
             border-radius: 10px;
+            gap: 1rem;
         }
+        
         .nav-btn {
             display: flex;
             align-items: center;
             gap: 0.5rem;
             padding: 1rem 2rem;
-            background: var(--gradient);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
             text-decoration: none;
             border-radius: 25px;
             font-weight: 600;
             transition: all 0.3s ease;
+            flex: 1;
+            justify-content: center;
+            text-align: center;
         }
+        
         .nav-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             color: white;
         }
-        .nav-btn.disabled {
-            background: #6c757d;
-            cursor: not-allowed;
+        
+        /* レスポンシブ */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            pre {
+                padding: 1rem;
+                font-size: 0.8rem;
+            }
+            
+            .navigation-buttons {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .nav-btn {
+                justify-content: center;
+            }
         }
-        .nav-btn.disabled:hover {
-            transform: none;
-            box-shadow: none;
+        
+        /* スクロールアニメーション */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.6s ease forwards;
+        }
+        
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* トップに戻るボタン */
+        .btn-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 1000;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            color: white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-top:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        /* パンくずリスト */
+        .breadcrumb-nav {
+            background: #f8f9fa;
+            padding: 1rem 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .breadcrumb {
+            background: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .breadcrumb-item + .breadcrumb-item::before {
+            content: ">";
+            color: #6c757d;
+        }
+        
+        .breadcrumb-item a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        .breadcrumb-item a:hover {
+            text-decoration: underline;
+        }
+        
+        .breadcrumb-item.active {
+            color: #6c757d;
         }
     </style>
 </head>
@@ -207,18 +422,20 @@
     </header>
 
     <!-- Breadcrumb -->
-    <nav class="breadcrumb-nav" style="background: #f8f9fa; padding: 1rem 0; border-bottom: 1px solid #dee2e6;">
-        <main>
-<div class="container">
+    <nav class="breadcrumb-nav">
+        <div class="container">
             <ol class="breadcrumb mb-0">
                 <li class="breadcrumb-item"><a href="index.html">ホーム</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Express.js 初心者向けチュートリアル</li>
             </ol>
         </div>
-</main>
     </nav>
-    <div class="container">
-        <hundefined id="object-object">[object Object]</hundefined><hundefined id="object-object">[object Object]</hundefined><ol>
+    
+    <main>
+        <div class="container">
+            <h1>Express.js 初心者向けチュートリアル</h1>
+<h2>目次</h2>
+<ol>
 <li><a href="#expressjs-%E3%81%A8%E3%81%AF">Express.jsとは</a></li>
 <li><a href="#%E7%92%B0%E5%A2%83%E8%A8%AD%E5%AE%9A">環境設定</a></li>
 <li><a href="#%E5%9F%BA%E6%9C%AC%E7%9A%84%E3%81%AA%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC">基本的なサーバー</a></li>
@@ -233,37 +450,1612 @@
 <li><a href="#%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E3%83%A1%E3%83%B3%E3%83%88">デプロイメント</a></li>
 <li><a href="#%E6%AC%A1%E3%81%AE%E3%82%B9%E3%83%86%E3%83%83%E3%83%97">次のステップ</a></li>
 </ol>
-<hundefined id="object-object">[object Object]</hundefined><p>Express.jsは、Node.js用の軽量で柔軟なWebアプリケーションフレームワークです。シンプルでありながら強力な機能を提供し、Web APIやWebアプリケーションの開発を効率化します。</p>
-<hundefined id="object-object">[object Object]</hundefined><ul>
+<h2>Express.js とは</h2>
+<p>Express.jsは、Node.js用の軽量で柔軟なWebアプリケーションフレームワークです。シンプルでありながら強力な機能を提供し、Web APIやWebアプリケーションの開発を効率化します。</p>
+<h3>Express.jsの特徴</h3>
+<ul>
 <li><strong>軽量・高速</strong>: 最小限の機能でスタート可能</li>
 <li><strong>柔軟性</strong>: 必要な機能を追加可能</li>
 <li><strong>豊富なミドルウェア</strong>: 多様な拡張機能</li>
 <li><strong>MVC パターン</strong>: 構造化された開発</li>
 <li><strong>大規模エコシステム</strong>: npmパッケージとの連携</li>
 </ul>
-<hundefined id="object-object">[object Object]</hundefined><ul>
+<h3>Express.jsでできること</h3>
+<ul>
 <li>REST API の構築</li>
 <li>Webアプリケーションの開発</li>
 <li>リアルタイムアプリケーション</li>
 <li>マイクロサービスの構築</li>
 </ul>
-<hundefined id="object-object">[object Object]</hundefined><hundefined id="object-object">[object Object]</hundefined><ul>
+<h2>環境設定</h2>
+<h3>前提条件</h3>
+<ul>
 <li>Node.js（LTS版推奨）</li>
 <li>npm または yarn</li>
 </ul>
-<hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><hundefined id="object-object">[object Object]</hundefined><p><code>app.js</code>:</p>
-<pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><p><code>routes/users.js</code>:</p>
-<pre><code class="language-javascript">[object Object]</code></pre><p><code>app.js</code>:</p>
-<pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><hundefined id="object-object">[object Object]</hundefined><p>ミドルウェアは、リクエストとレスポンスの間で実行される関数です。リクエストの前処理、レスポンスの後処理、認証、ログ出力などに使用されます。</p>
-<hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><pre><code class="language-javascript">[object Object]</code></pre><p><code>views/layout.ejs</code>:</p>
-<pre><code class="language-javascript">[object Object]</code></pre><p><code>views/index.ejs</code>:</p>
-<pre><code class="language-javascript">[object Object]</code></pre><p><code>views/users.ejs</code>:</p>
-<pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><p><code>Procfile</code>:</p>
-<pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><pre><code class="language-javascript">[object Object]</code></pre><p><code>ecosystem.config.js</code>:</p>
-<pre><code class="language-javascript">[object Object]</code></pre><p>コマンド:</p>
-<pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><p><code>Dockerfile</code>:</p>
-<pre><code class="language-javascript">[object Object]</code></pre><p><code>docker-compose.yml</code>:</p>
-<pre><code class="language-javascript">[object Object]</code></pre><hundefined id="object-object">[object Object]</hundefined><hundefined id="object-object">[object Object]</hundefined><ol>
+<h3>プロジェクトの初期化</h3>
+<pre><code class="language-bash"># プロジェクトディレクトリを作成
+mkdir express-tutorial
+cd express-tutorial
+
+# package.json を作成
+npm init -y
+
+# Express.js をインストール
+npm install express
+
+# 開発用ツールをインストール
+npm install --save-dev nodemon
+</code></pre>
+<h3>package.json の設定</h3>
+<pre><code class="language-json">{
+  &quot;name&quot;: &quot;express-tutorial&quot;,
+  &quot;version&quot;: &quot;1.0.0&quot;,
+  &quot;description&quot;: &quot;Express.js tutorial project&quot;,
+  &quot;main&quot;: &quot;app.js&quot;,
+  &quot;scripts&quot;: {
+    &quot;start&quot;: &quot;node app.js&quot;,
+    &quot;dev&quot;: &quot;nodemon app.js&quot;,
+    &quot;test&quot;: &quot;echo \&quot;Error: no test specified\&quot; &amp;&amp; exit 1&quot;
+  },
+  &quot;dependencies&quot;: {
+    &quot;express&quot;: &quot;^4.18.2&quot;
+  },
+  &quot;devDependencies&quot;: {
+    &quot;nodemon&quot;: &quot;^3.0.1&quot;
+  }
+}
+</code></pre>
+<h2>基本的なサーバー</h2>
+<h3>最小限のExpressサーバー</h3>
+<p><code>app.js</code>:</p>
+<pre><code class="language-javascript">const express = require(&#39;express&#39;);
+const app = express();
+const port = 3000;
+
+// 基本的なルート
+app.get(&#39;/&#39;, (req, res) =&gt; {
+  res.send(&#39;Hello Express!&#39;);
+});
+
+// サーバーを起動
+app.listen(port, () =&gt; {
+  console.log(`サーバーが http://localhost:${port} で起動しました`);
+});
+</code></pre>
+<h3>サーバーの起動</h3>
+<pre><code class="language-bash"># 本番モード
+npm start
+
+# 開発モード（ファイル変更時に自動再起動）
+npm run dev
+</code></pre>
+<h3>レスポンスの種類</h3>
+<pre><code class="language-javascript">const express = require(&#39;express&#39;);
+const app = express();
+
+// テキストレスポンス
+app.get(&#39;/text&#39;, (req, res) =&gt; {
+  res.send(&#39;テキストレスポンス&#39;);
+});
+
+// JSONレスポンス
+app.get(&#39;/json&#39;, (req, res) =&gt; {
+  res.json({
+    message: &#39;JSONレスポンス&#39;,
+    timestamp: new Date(),
+    data: [1, 2, 3]
+  });
+});
+
+// HTMLレスポンス
+app.get(&#39;/html&#39;, (req, res) =&gt; {
+  res.send(`
+    &lt;html&gt;
+      &lt;head&gt;&lt;title&gt;Express Tutorial&lt;/title&gt;&lt;/head&gt;
+      &lt;body&gt;
+        &lt;h1&gt;HTMLレスポンス&lt;/h1&gt;
+        &lt;p&gt;これはHTMLです。&lt;/p&gt;
+      &lt;/body&gt;
+    &lt;/html&gt;
+  `);
+});
+
+// ステータスコード付きレスポンス
+app.get(&#39;/status&#39;, (req, res) =&gt; {
+  res.status(201).json({ message: &#39;作成されました&#39; });
+});
+
+app.listen(3000);
+</code></pre>
+<h2>ルーティング</h2>
+<h3>基本的なHTTPメソッド</h3>
+<pre><code class="language-javascript">const express = require(&#39;express&#39;);
+const app = express();
+
+// JSON解析ミドルウェア
+app.use(express.json());
+
+// GET リクエスト
+app.get(&#39;/users&#39;, (req, res) =&gt; {
+  res.json({ message: &#39;ユーザー一覧を取得&#39; });
+});
+
+// POST リクエスト
+app.post(&#39;/users&#39;, (req, res) =&gt; {
+  const userData = req.body;
+  res.status(201).json({ 
+    message: &#39;ユーザーを作成&#39;,
+    user: userData 
+  });
+});
+
+// PUT リクエスト
+app.put(&#39;/users/:id&#39;, (req, res) =&gt; {
+  const userId = req.params.id;
+  const userData = req.body;
+  res.json({ 
+    message: `ユーザー ${userId} を更新`,
+    user: userData 
+  });
+});
+
+// DELETE リクエスト
+app.delete(&#39;/users/:id&#39;, (req, res) =&gt; {
+  const userId = req.params.id;
+  res.json({ message: `ユーザー ${userId} を削除` });
+});
+
+app.listen(3000);
+</code></pre>
+<h3>パラメーター処理</h3>
+<pre><code class="language-javascript">const express = require(&#39;express&#39;);
+const app = express();
+
+// ルートパラメーター
+app.get(&#39;/users/:id&#39;, (req, res) =&gt; {
+  const userId = req.params.id;
+  res.json({ userId, message: `ユーザーID: ${userId}` });
+});
+
+// 複数のパラメーター
+app.get(&#39;/users/:userId/posts/:postId&#39;, (req, res) =&gt; {
+  const { userId, postId } = req.params;
+  res.json({ 
+    userId, 
+    postId, 
+    message: `ユーザー ${userId} の投稿 ${postId}` 
+  });
+});
+
+// クエリパラメーター
+app.get(&#39;/search&#39;, (req, res) =&gt; {
+  const { q, page, limit } = req.query;
+  res.json({
+    query: q,
+    page: page || 1,
+    limit: limit || 10,
+    message: &#39;検索結果&#39;
+  });
+});
+
+// パラメーターの検証
+app.get(&#39;/users/:id(\\d+)&#39;, (req, res) =&gt; {
+  const userId = parseInt(req.params.id);
+  res.json({ userId, message: &#39;数値のIDのみ受け付け&#39; });
+});
+
+app.listen(3000);
+</code></pre>
+<h3>ルーターモジュール</h3>
+<p><code>routes/users.js</code>:</p>
+<pre><code class="language-javascript">const express = require(&#39;express&#39;);
+const router = express.Router();
+
+// サンプルデータ
+let users = [
+  { id: 1, name: &#39;田中太郎&#39;, email: &#39;tanaka@example.com&#39; },
+  { id: 2, name: &#39;佐藤花子&#39;, email: &#39;sato@example.com&#39; }
+];
+
+// 全ユーザー取得
+router.get(&#39;/&#39;, (req, res) =&gt; {
+  res.json(users);
+});
+
+// 特定ユーザー取得
+router.get(&#39;/:id&#39;, (req, res) =&gt; {
+  const user = users.find(u =&gt; u.id === parseInt(req.params.id));
+  if (!user) {
+    return res.status(404).json({ error: &#39;ユーザーが見つかりません&#39; });
+  }
+  res.json(user);
+});
+
+// ユーザー作成
+router.post(&#39;/&#39;, (req, res) =&gt; {
+  const { name, email } = req.body;
+  const newUser = {
+    id: users.length + 1,
+    name,
+    email
+  };
+  users.push(newUser);
+  res.status(201).json(newUser);
+});
+
+// ユーザー更新
+router.put(&#39;/:id&#39;, (req, res) =&gt; {
+  const userId = parseInt(req.params.id);
+  const userIndex = users.findIndex(u =&gt; u.id === userId);
+  
+  if (userIndex === -1) {
+    return res.status(404).json({ error: &#39;ユーザーが見つかりません&#39; });
+  }
+  
+  users[userIndex] = { ...users[userIndex], ...req.body };
+  res.json(users[userIndex]);
+});
+
+// ユーザー削除
+router.delete(&#39;/:id&#39;, (req, res) =&gt; {
+  const userId = parseInt(req.params.id);
+  const userIndex = users.findIndex(u =&gt; u.id === userId);
+  
+  if (userIndex === -1) {
+    return res.status(404).json({ error: &#39;ユーザーが見つかりません&#39; });
+  }
+  
+  users.splice(userIndex, 1);
+  res.status(204).send();
+});
+
+module.exports = router;
+</code></pre>
+<p><code>app.js</code>:</p>
+<pre><code class="language-javascript">const express = require(&#39;express&#39;);
+const app = express();
+
+// ミドルウェア
+app.use(express.json());
+
+// ルーターを使用
+const usersRouter = require(&#39;./routes/users&#39;);
+app.use(&#39;/api/users&#39;, usersRouter);
+
+app.get(&#39;/&#39;, (req, res) =&gt; {
+  res.json({ message: &#39;API サーバーが動作中&#39; });
+});
+
+app.listen(3000, () =&gt; {
+  console.log(&#39;サーバーが起動しました&#39;);
+});
+</code></pre>
+<h2>ミドルウェア</h2>
+<h3>ミドルウェアとは</h3>
+<p>ミドルウェアは、リクエストとレスポンスの間で実行される関数です。リクエストの前処理、レスポンスの後処理、認証、ログ出力などに使用されます。</p>
+<h3>組み込みミドルウェア</h3>
+<pre><code class="language-javascript">const express = require(&#39;express&#39;);
+const app = express();
+
+// JSON解析ミドルウェア
+app.use(express.json());
+
+// URL エンコードされたデータ解析
+app.use(express.urlencoded({ extended: true }));
+
+// 静的ファイル配信
+app.use(express.static(&#39;public&#39;));
+
+app.listen(3000);
+</code></pre>
+<h3>カスタムミドルウェア</h3>
+<pre><code class="language-javascript">const express = require(&#39;express&#39;);
+const app = express();
+
+// ログ出力ミドルウェア
+const logger = (req, res, next) =&gt; {
+  const timestamp = new Date().toISOString();
+  console.log(`${timestamp} - ${req.method} ${req.path}`);
+  next(); // 次のミドルウェアまたはルートハンドラーに制御を渡す
+};
+
+// 認証ミドルウェア
+const authenticate = (req, res, next) =&gt; {
+  const token = req.headers.authorization;
+  
+  if (!token) {
+    return res.status(401).json({ error: &#39;認証トークンが必要です&#39; });
+  }
+  
+  if (token !== &#39;Bearer secret-token&#39;) {
+    return res.status(403).json({ error: &#39;無効なトークンです&#39; });
+  }
+  
+  req.user = { id: 1, name: &#39;ユーザー&#39; }; // ユーザー情報をリクエストに追加
+  next();
+};
+
+// CORS ミドルウェア
+const cors = (req, res, next) =&gt; {
+  res.header(&#39;Access-Control-Allow-Origin&#39;, &#39;*&#39;);
+  res.header(&#39;Access-Control-Allow-Headers&#39;, &#39;Origin, X-Requested-With, Content-Type, Accept, Authorization&#39;);
+  res.header(&#39;Access-Control-Allow-Methods&#39;, &#39;GET, POST, PUT, DELETE, OPTIONS&#39;);
+  
+  if (req.method === &#39;OPTIONS&#39;) {
+    return res.sendStatus(200);
+  }
+  
+  next();
+};
+
+// ミドルウェアを適用
+app.use(logger);
+app.use(cors);
+app.use(express.json());
+
+// 公開ルート
+app.get(&#39;/public&#39;, (req, res) =&gt; {
+  res.json({ message: &#39;誰でもアクセス可能&#39; });
+});
+
+// 保護されたルート
+app.get(&#39;/protected&#39;, authenticate, (req, res) =&gt; {
+  res.json({ 
+    message: &#39;認証されたユーザーのみアクセス可能&#39;,
+    user: req.user 
+  });
+});
+
+app.listen(3000);
+</code></pre>
+<h3>サードパーティミドルウェア</h3>
+<pre><code class="language-bash">npm install helmet morgan compression
+</code></pre>
+<pre><code class="language-javascript">const express = require(&#39;express&#39;);
+const helmet = require(&#39;helmet&#39;);
+const morgan = require(&#39;morgan&#39;);
+const compression = require(&#39;compression&#39;);
+
+const app = express();
+
+// セキュリティヘッダー
+app.use(helmet());
+
+// ログ出力
+app.use(morgan(&#39;combined&#39;));
+
+// レスポンス圧縮
+app.use(compression());
+
+// JSON解析
+app.use(express.json());
+
+app.get(&#39;/&#39;, (req, res) =&gt; {
+  res.json({ message: &#39;セキュアなExpressアプリ&#39; });
+});
+
+app.listen(3000);
+</code></pre>
+<h3>エラーハンドリングミドルウェア</h3>
+<pre><code class="language-javascript">const express = require(&#39;express&#39;);
+const app = express();
+
+app.use(express.json());
+
+// 通常のルート
+app.get(&#39;/&#39;, (req, res) =&gt; {
+  res.json({ message: &#39;Hello Express&#39; });
+});
+
+// エラーを発生させるルート
+app.get(&#39;/error&#39;, (req, res, next) =&gt; {
+  const error = new Error(&#39;意図的なエラー&#39;);
+  error.status = 500;
+  next(error);
+});
+
+// 404 ハンドラー（他のルートにマッチしない場合）
+app.use((req, res, next) =&gt; {
+  const error = new Error(`パス ${req.path} が見つかりません`);
+  error.status = 404;
+  next(error);
+});
+
+// エラーハンドリングミドルウェア（最後に配置）
+app.use((err, req, res, next) =&gt; {
+  console.error(&#39;エラーが発生しました:&#39;, err.message);
+  
+  const status = err.status || 500;
+  const message = status === 500 ? &#39;サーバーエラーが発生しました&#39; : err.message;
+  
+  res.status(status).json({
+    error: {
+      message,
+      status,
+      timestamp: new Date().toISOString()
+    }
+  });
+});
+
+app.listen(3000);
+</code></pre>
+<h2>テンプレートエンジン</h2>
+<h3>EJSの設定と使用</h3>
+<pre><code class="language-bash">npm install ejs
+</code></pre>
+<pre><code class="language-javascript">const express = require(&#39;express&#39;);
+const path = require(&#39;path&#39;);
+const app = express();
+
+// ビューエンジンの設定
+app.set(&#39;view engine&#39;, &#39;ejs&#39;);
+app.set(&#39;views&#39;, path.join(__dirname, &#39;views&#39;));
+
+// 静的ファイル
+app.use(express.static(&#39;public&#39;));
+
+// サンプルデータ
+const users = [
+  { id: 1, name: &#39;田中太郎&#39;, email: &#39;tanaka@example.com&#39; },
+  { id: 2, name: &#39;佐藤花子&#39;, email: &#39;sato@example.com&#39; },
+  { id: 3, name: &#39;鈴木一郎&#39;, email: &#39;suzuki@example.com&#39; }
+];
+
+// ホームページ
+app.get(&#39;/&#39;, (req, res) =&gt; {
+  res.render(&#39;index&#39;, { 
+    title: &#39;Express Tutorial&#39;,
+    message: &#39;Express.jsへようこそ！&#39;
+  });
+});
+
+// ユーザー一覧ページ
+app.get(&#39;/users&#39;, (req, res) =&gt; {
+  res.render(&#39;users&#39;, { 
+    title: &#39;ユーザー一覧&#39;,
+    users 
+  });
+});
+
+app.listen(3000);
+</code></pre>
+<p><code>views/layout.ejs</code>:</p>
+<pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;ja&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+    &lt;title&gt;&lt;%= title %&gt;&lt;/title&gt;
+    &lt;link href=&quot;https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css&quot; rel=&quot;stylesheet&quot;&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;nav class=&quot;navbar navbar-expand-lg navbar-dark bg-dark&quot;&gt;
+        &lt;div class=&quot;container&quot;&gt;
+            &lt;a class=&quot;navbar-brand&quot; href=&quot;/&quot;&gt;Express Tutorial&lt;/a&gt;
+            &lt;div class=&quot;navbar-nav&quot;&gt;
+                &lt;a class=&quot;nav-link&quot; href=&quot;/&quot;&gt;ホーム&lt;/a&gt;
+                &lt;a class=&quot;nav-link&quot; href=&quot;/users&quot;&gt;ユーザー&lt;/a&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/nav&gt;
+    
+    &lt;main class=&quot;container mt-4&quot;&gt;
+        &lt;%- body %&gt;
+    &lt;/main&gt;
+    
+    &lt;script src=&quot;https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js&quot;&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p><code>views/index.ejs</code>:</p>
+<pre><code class="language-html">&lt;% layout(&#39;layout&#39;) -%&gt;
+
+&lt;div class=&quot;jumbotron&quot;&gt;
+    &lt;h1 class=&quot;display-4&quot;&gt;&lt;%= message %&gt;&lt;/h1&gt;
+    &lt;p class=&quot;lead&quot;&gt;Express.jsの基本的な使い方を学習しましょう。&lt;/p&gt;
+    &lt;a class=&quot;btn btn-primary btn-lg&quot; href=&quot;/users&quot; role=&quot;button&quot;&gt;ユーザー一覧を見る&lt;/a&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;row&quot;&gt;
+    &lt;div class=&quot;col-md-4&quot;&gt;
+        &lt;h3&gt;ルーティング&lt;/h3&gt;
+        &lt;p&gt;URLパスに応じて異なるページを表示する機能を学習します。&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;col-md-4&quot;&gt;
+        &lt;h3&gt;ミドルウェア&lt;/h3&gt;
+        &lt;p&gt;リクエストとレスポンスの間で実行される処理を学習します。&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;col-md-4&quot;&gt;
+        &lt;h3&gt;テンプレート&lt;/h3&gt;
+        &lt;p&gt;動的なHTMLページの生成方法を学習します。&lt;/p&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+<p><code>views/users.ejs</code>:</p>
+<pre><code class="language-html">&lt;% layout(&#39;layout&#39;) -%&gt;
+
+&lt;h1&gt;&lt;%= title %&gt;&lt;/h1&gt;
+
+&lt;div class=&quot;row&quot;&gt;
+    &lt;div class=&quot;col-12&quot;&gt;
+        &lt;table class=&quot;table table-striped&quot;&gt;
+            &lt;thead&gt;
+                &lt;tr&gt;
+                    &lt;th&gt;ID&lt;/th&gt;
+                    &lt;th&gt;名前&lt;/th&gt;
+                    &lt;th&gt;メールアドレス&lt;/th&gt;
+                &lt;/tr&gt;
+            &lt;/thead&gt;
+            &lt;tbody&gt;
+                &lt;% users.forEach(user =&gt; { %&gt;
+                    &lt;tr&gt;
+                        &lt;td&gt;&lt;%= user.id %&gt;&lt;/td&gt;
+                        &lt;td&gt;&lt;%= user.name %&gt;&lt;/td&gt;
+                        &lt;td&gt;&lt;%= user.email %&gt;&lt;/td&gt;
+                    &lt;/tr&gt;
+                &lt;% }); %&gt;
+            &lt;/tbody&gt;
+        &lt;/table&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;% if (users.length === 0) { %&gt;
+    &lt;div class=&quot;alert alert-info&quot;&gt;
+        ユーザーが登録されていません。
+    &lt;/div&gt;
+&lt;% } %&gt;
+</code></pre>
+<h3>Handlebarsの使用</h3>
+<pre><code class="language-bash">npm install express-handlebars
+</code></pre>
+<pre><code class="language-javascript">const express = require(&#39;express&#39;);
+const { engine } = require(&#39;express-handlebars&#39;);
+const app = express();
+
+// Handlebarsの設定
+app.engine(&#39;handlebars&#39;, engine());
+app.set(&#39;view engine&#39;, &#39;handlebars&#39;);
+app.set(&#39;views&#39;, &#39;./views&#39;);
+
+app.get(&#39;/&#39;, (req, res) =&gt; {
+  res.render(&#39;home&#39;, {
+    title: &#39;Handlebars Tutorial&#39;,
+    users: [
+      { name: &#39;田中&#39;, active: true },
+      { name: &#39;佐藤&#39;, active: false }
+    ]
+  });
+});
+
+app.listen(3000);
+</code></pre>
+<h2>静的ファイル配信</h2>
+<h3>基本的な静的ファイル配信</h3>
+<pre><code class="language-javascript">const express = require(&#39;express&#39;);
+const path = require(&#39;path&#39;);
+const app = express();
+
+// 静的ファイルの配信（publicディレクトリから）
+app.use(express.static(&#39;public&#39;));
+
+// 異なるパスで静的ファイルを配信
+app.use(&#39;/assets&#39;, express.static(&#39;public&#39;));
+
+// 複数の静的ディレクトリ
+app.use(express.static(&#39;public&#39;));
+app.use(express.static(&#39;files&#39;));
+
+// 絶対パスを使用
+app.use(express.static(path.join(__dirname, &#39;public&#39;)));
+
+app.listen(3000);
+</code></pre>
+<h3>ディレクトリ構造</h3>
+<pre><code>project/
+├── app.js
+├── public/
+│   ├── css/
+│   │   └── style.css
+│   ├── js/
+│   │   └── app.js
+│   ├── images/
+│   │   └── logo.png
+│   └── index.html
+└── uploads/
+    └── files...
+</code></pre>
+<h3>ファイルアップロード</h3>
+<pre><code class="language-bash">npm install multer
+</code></pre>
+<pre><code class="language-javascript">const express = require(&#39;express&#39;);
+const multer = require(&#39;multer&#39;);
+const path = require(&#39;path&#39;);
+const app = express();
+
+// アップロード設定
+const storage = multer.diskStorage({
+  destination: (req, file, cb) =&gt; {
+    cb(null, &#39;uploads/&#39;);
+  },
+  filename: (req, file, cb) =&gt; {
+    const uniqueSuffix = Date.now() + &#39;-&#39; + Math.round(Math.random() * 1E9);
+    cb(null, file.fieldname + &#39;-&#39; + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({ 
+  storage: storage,
+  limits: {
+    fileSize: 1024 * 1024 * 5 // 5MB制限
+  },
+  fileFilter: (req, file, cb) =&gt; {
+    const allowedTypes = [&#39;image/jpeg&#39;, &#39;image/png&#39;, &#39;image/gif&#39;];
+    if (allowedTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error(&#39;許可されていないファイル形式です&#39;));
+    }
+  }
+});
+
+app.use(express.static(&#39;public&#39;));
+app.use(&#39;/uploads&#39;, express.static(&#39;uploads&#39;));
+
+// ファイルアップロード（単一ファイル）
+app.post(&#39;/upload&#39;, upload.single(&#39;file&#39;), (req, res) =&gt; {
+  if (!req.file) {
+    return res.status(400).json({ error: &#39;ファイルが選択されていません&#39; });
+  }
+  
+  res.json({
+    message: &#39;ファイルがアップロードされました&#39;,
+    filename: req.file.filename,
+    originalname: req.file.originalname,
+    size: req.file.size
+  });
+});
+
+// 複数ファイルアップロード
+app.post(&#39;/upload-multiple&#39;, upload.array(&#39;files&#39;, 5), (req, res) =&gt; {
+  if (!req.files || req.files.length === 0) {
+    return res.status(400).json({ error: &#39;ファイルが選択されていません&#39; });
+  }
+  
+  const uploadedFiles = req.files.map(file =&gt; ({
+    filename: file.filename,
+    originalname: file.originalname,
+    size: file.size
+  }));
+  
+  res.json({
+    message: `${req.files.length}個のファイルがアップロードされました`,
+    files: uploadedFiles
+  });
+});
+
+app.listen(3000);
+</code></pre>
+<h2>リクエスト・レスポンス処理</h2>
+<h3>リクエストオブジェクト</h3>
+<pre><code class="language-javascript">const express = require(&#39;express&#39;);
+const app = express();
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.post(&#39;/request-info&#39;, (req, res) =&gt; {
+  const requestInfo = {
+    // HTTPメソッド
+    method: req.method,
+    
+    // URL関連
+    url: req.url,
+    path: req.path,
+    originalUrl: req.originalUrl,
+    
+    // パラメーター
+    params: req.params,
+    query: req.query,
+    body: req.body,
+    
+    // ヘッダー
+    headers: req.headers,
+    userAgent: req.get(&#39;User-Agent&#39;),
+    
+    // その他
+    ip: req.ip,
+    protocol: req.protocol,
+    secure: req.secure,
+    cookies: req.cookies
+  };
+  
+  res.json(requestInfo);
+});
+
+app.listen(3000);
+</code></pre>
+<h3>レスポンスオブジェクト</h3>
+<pre><code class="language-javascript">const express = require(&#39;express&#39;);
+const app = express();
+
+app.get(&#39;/response-methods&#39;, (req, res) =&gt; {
+  // 基本的なレスポンス
+  res.send(&#39;基本的なレスポンス&#39;);
+});
+
+app.get(&#39;/json-response&#39;, (req, res) =&gt; {
+  // JSONレスポンス
+  res.json({ message: &#39;JSONレスポンス&#39;, data: [1, 2, 3] });
+});
+
+app.get(&#39;/status-response&#39;, (req, res) =&gt; {
+  // ステータスコード付きレスポンス
+  res.status(201).json({ message: &#39;作成されました&#39; });
+});
+
+app.get(&#39;/redirect&#39;, (req, res) =&gt; {
+  // リダイレクト
+  res.redirect(&#39;/new-location&#39;);
+});
+
+app.get(&#39;/new-location&#39;, (req, res) =&gt; {
+  res.send(&#39;リダイレクト先&#39;);
+});
+
+app.get(&#39;/headers&#39;, (req, res) =&gt; {
+  // カスタムヘッダー
+  res.set(&#39;X-Custom-Header&#39;, &#39;カスタム値&#39;);
+  res.set({
+    &#39;X-Another-Header&#39;: &#39;別の値&#39;,
+    &#39;Content-Type&#39;: &#39;application/json&#39;
+  });
+  res.json({ message: &#39;カスタムヘッダー付きレスポンス&#39; });
+});
+
+app.get(&#39;/cookie&#39;, (req, res) =&gt; {
+  // クッキーの設定
+  res.cookie(&#39;username&#39;, &#39;ユーザー&#39;, {
+    maxAge: 900000, // 15分
+    httpOnly: true,
+    secure: false
+  });
+  res.send(&#39;クッキーが設定されました&#39;);
+});
+
+app.get(&#39;/download&#39;, (req, res) =&gt; {
+  // ファイルダウンロード
+  res.download(&#39;./package.json&#39;, &#39;download.json&#39;, (err) =&gt; {
+    if (err) {
+      console.error(&#39;ダウンロードエラー:&#39;, err);
+      res.status(500).send(&#39;ダウンロードに失敗しました&#39;);
+    }
+  });
+});
+
+app.listen(3000);
+</code></pre>
+<h3>バリデーション</h3>
+<pre><code class="language-bash">npm install joi
+</code></pre>
+<pre><code class="language-javascript">const express = require(&#39;express&#39;);
+const Joi = require(&#39;joi&#39;);
+const app = express();
+
+app.use(express.json());
+
+// バリデーションスキーマ
+const userSchema = Joi.object({
+  name: Joi.string().min(2).max(50).required(),
+  email: Joi.string().email().required(),
+  age: Joi.number().integer().min(0).max(120),
+  password: Joi.string().min(6).required()
+});
+
+// バリデーションミドルウェア
+const validateUser = (req, res, next) =&gt; {
+  const { error, value } = userSchema.validate(req.body);
+  
+  if (error) {
+    return res.status(400).json({
+      error: &#39;バリデーションエラー&#39;,
+      details: error.details.map(detail =&gt; ({
+        field: detail.path.join(&#39;.&#39;),
+        message: detail.message
+      }))
+    });
+  }
+  
+  req.validatedData = value;
+  next();
+};
+
+app.post(&#39;/users&#39;, validateUser, (req, res) =&gt; {
+  const userData = req.validatedData;
+  
+  // ユーザー作成処理...
+  console.log(&#39;バリデーション済みデータ:&#39;, userData);
+  
+  res.status(201).json({
+    message: &#39;ユーザーが作成されました&#39;,
+    user: {
+      id: Date.now(),
+      name: userData.name,
+      email: userData.email,
+      age: userData.age
+      // パスワードは含めない
+    }
+  });
+});
+
+app.listen(3000);
+</code></pre>
+<h2>エラーハンドリング</h2>
+<h3>包括的なエラーハンドリング</h3>
+<pre><code class="language-javascript">const express = require(&#39;express&#39;);
+const app = express();
+
+app.use(express.json());
+
+// カスタムエラークラス
+class AppError extends Error {
+  constructor(message, statusCode) {
+    super(message);
+    this.statusCode = statusCode;
+    this.isOperational = true;
+    
+    Error.captureStackTrace(this, this.constructor);
+  }
+}
+
+// 非同期エラーをキャッチするヘルパー
+const catchAsync = (fn) =&gt; {
+  return (req, res, next) =&gt; {
+    fn(req, res, next).catch(next);
+  };
+};
+
+// サンプルデータベース（メモリ内）
+let users = [
+  { id: 1, name: &#39;田中太郎&#39;, email: &#39;tanaka@example.com&#39; }
+];
+
+// ユーザー取得（エラーハンドリング付き）
+app.get(&#39;/users/:id&#39;, catchAsync(async (req, res, next) =&gt; {
+  const userId = parseInt(req.params.id);
+  
+  if (isNaN(userId)) {
+    return next(new AppError(&#39;無効なユーザーIDです&#39;, 400));
+  }
+  
+  const user = users.find(u =&gt; u.id === userId);
+  
+  if (!user) {
+    return next(new AppError(&#39;ユーザーが見つかりません&#39;, 404));
+  }
+  
+  res.json(user);
+}));
+
+// データベースエラーをシミュレート
+app.get(&#39;/database-error&#39;, catchAsync(async (req, res, next) =&gt; {
+  // データベース接続エラーをシミュレート
+  throw new Error(&#39;データベース接続エラー&#39;);
+}));
+
+// 意図的なエラー
+app.get(&#39;/trigger-error&#39;, (req, res, next) =&gt; {
+  next(new AppError(&#39;これは意図的なエラーです&#39;, 500));
+});
+
+// 404 ハンドラー
+app.all(&#39;*&#39;, (req, res, next) =&gt; {
+  next(new AppError(`パス ${req.originalUrl} が見つかりません`, 404));
+});
+
+// グローバルエラーハンドラー
+app.use((err, req, res, next) =&gt; {
+  let { statusCode = 500, message } = err;
+  
+  // 開発環境でのデバッグ情報
+  if (process.env.NODE_ENV === &#39;development&#39;) {
+    console.error(&#39;エラー詳細:&#39;, {
+      error: err,
+      stack: err.stack,
+      request: {
+        method: req.method,
+        url: req.url,
+        headers: req.headers
+      }
+    });
+  }
+  
+  // 本番環境では詳細なエラー情報を隠す
+  if (process.env.NODE_ENV === &#39;production&#39; &amp;&amp; !err.isOperational) {
+    message = &#39;サーバーエラーが発生しました&#39;;
+  }
+  
+  res.status(statusCode).json({
+    status: &#39;error&#39;,
+    message,
+    ...(process.env.NODE_ENV === &#39;development&#39; &amp;&amp; { stack: err.stack })
+  });
+});
+
+app.listen(3000, () =&gt; {
+  console.log(&#39;サーバーが起動しました&#39;);
+});
+</code></pre>
+<h3>ログ出力</h3>
+<pre><code class="language-bash">npm install winston
+</code></pre>
+<pre><code class="language-javascript">const express = require(&#39;express&#39;);
+const winston = require(&#39;winston&#39;);
+const app = express();
+
+// ログ設定
+const logger = winston.createLogger({
+  level: &#39;info&#39;,
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.errors({ stack: true }),
+    winston.format.json()
+  ),
+  defaultMeta: { service: &#39;express-app&#39; },
+  transports: [
+    new winston.transports.File({ filename: &#39;error.log&#39;, level: &#39;error&#39; }),
+    new winston.transports.File({ filename: &#39;combined.log&#39; })
+  ]
+});
+
+if (process.env.NODE_ENV !== &#39;production&#39;) {
+  logger.add(new winston.transports.Console({
+    format: winston.format.simple()
+  }));
+}
+
+// リクエストログミドルウェア
+app.use((req, res, next) =&gt; {
+  logger.info(`${req.method} ${req.path}`, {
+    ip: req.ip,
+    userAgent: req.get(&#39;User-Agent&#39;)
+  });
+  next();
+});
+
+app.use(express.json());
+
+app.get(&#39;/&#39;, (req, res) =&gt; {
+  logger.info(&#39;ホームページがアクセスされました&#39;);
+  res.json({ message: &#39;Hello Express&#39; });
+});
+
+// エラーハンドリング
+app.use((err, req, res, next) =&gt; {
+  logger.error(&#39;エラーが発生しました&#39;, {
+    error: err.message,
+    stack: err.stack,
+    url: req.url,
+    method: req.method
+  });
+  
+  res.status(500).json({ error: &#39;サーバーエラー&#39; });
+});
+
+app.listen(3000);
+</code></pre>
+<h2>セキュリティ</h2>
+<h3>基本的なセキュリティ対策</h3>
+<pre><code class="language-bash">npm install helmet express-rate-limit bcrypt jsonwebtoken
+</code></pre>
+<pre><code class="language-javascript">const express = require(&#39;express&#39;);
+const helmet = require(&#39;helmet&#39;);
+const rateLimit = require(&#39;express-rate-limit&#39;);
+const bcrypt = require(&#39;bcrypt&#39;);
+const jwt = require(&#39;jsonwebtoken&#39;);
+
+const app = express();
+
+// セキュリティヘッダー
+app.use(helmet());
+
+// レート制限
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15分
+  max: 100, // 最大100リクエスト
+  message: {
+    error: &#39;リクエストが多すぎます。しばらく待ってから再試行してください。&#39;
+  },
+  standardHeaders: true,
+  legacyHeaders: false
+});
+
+app.use(limiter);
+
+// ログイン用のより厳しいレート制限
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5, // 15分間に5回まで
+  skipSuccessfulRequests: true
+});
+
+app.use(express.json({ limit: &#39;10mb&#39; }));
+
+// サンプルユーザーデータ
+const users = [];
+
+// JWT秘密鍵（実際の開発では環境変数を使用）
+const JWT_SECRET = process.env.JWT_SECRET || &#39;your-secret-key&#39;;
+
+// ユーザー登録
+app.post(&#39;/register&#39;, async (req, res) =&gt; {
+  try {
+    const { username, password, email } = req.body;
+    
+    // 入力検証
+    if (!username || !password || !email) {
+      return res.status(400).json({ error: &#39;必要な項目が入力されていません&#39; });
+    }
+    
+    if (password.length &lt; 6) {
+      return res.status(400).json({ error: &#39;パスワードは6文字以上で入力してください&#39; });
+    }
+    
+    // 既存ユーザーチェック
+    const existingUser = users.find(u =&gt; u.username === username || u.email === email);
+    if (existingUser) {
+      return res.status(409).json({ error: &#39;ユーザー名またはメールアドレスが既に使用されています&#39; });
+    }
+    
+    // パスワードハッシュ化
+    const saltRounds = 12;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    
+    // ユーザー作成
+    const user = {
+      id: users.length + 1,
+      username,
+      email,
+      password: hashedPassword,
+      createdAt: new Date()
+    };
+    
+    users.push(user);
+    
+    // レスポンス（パスワードは含めない）
+    const { password: _, ...userResponse } = user;
+    res.status(201).json({
+      message: &#39;ユーザーが作成されました&#39;,
+      user: userResponse
+    });
+    
+  } catch (error) {
+    res.status(500).json({ error: &#39;サーバーエラーが発生しました&#39; });
+  }
+});
+
+// ログイン
+app.post(&#39;/login&#39;, loginLimiter, async (req, res) =&gt; {
+  try {
+    const { username, password } = req.body;
+    
+    if (!username || !password) {
+      return res.status(400).json({ error: &#39;ユーザー名とパスワードが必要です&#39; });
+    }
+    
+    // ユーザー検索
+    const user = users.find(u =&gt; u.username === username);
+    if (!user) {
+      return res.status(401).json({ error: &#39;認証に失敗しました&#39; });
+    }
+    
+    // パスワード検証
+    const isValidPassword = await bcrypt.compare(password, user.password);
+    if (!isValidPassword) {
+      return res.status(401).json({ error: &#39;認証に失敗しました&#39; });
+    }
+    
+    // JWTトークン生成
+    const token = jwt.sign(
+      { userId: user.id, username: user.username },
+      JWT_SECRET,
+      { expiresIn: &#39;24h&#39; }
+    );
+    
+    res.json({
+      message: &#39;ログインに成功しました&#39;,
+      token,
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email
+      }
+    });
+    
+  } catch (error) {
+    res.status(500).json({ error: &#39;サーバーエラーが発生しました&#39; });
+  }
+});
+
+// 認証ミドルウェア
+const authenticateToken = (req, res, next) =&gt; {
+  const authHeader = req.headers[&#39;authorization&#39;];
+  const token = authHeader &amp;&amp; authHeader.split(&#39; &#39;)[1];
+  
+  if (!token) {
+    return res.status(401).json({ error: &#39;アクセストークンが必要です&#39; });
+  }
+  
+  jwt.verify(token, JWT_SECRET, (err, user) =&gt; {
+    if (err) {
+      return res.status(403).json({ error: &#39;無効なトークンです&#39; });
+    }
+    req.user = user;
+    next();
+  });
+};
+
+// 保護されたルート
+app.get(&#39;/profile&#39;, authenticateToken, (req, res) =&gt; {
+  const user = users.find(u =&gt; u.id === req.user.userId);
+  if (!user) {
+    return res.status(404).json({ error: &#39;ユーザーが見つかりません&#39; });
+  }
+  
+  const { password: _, ...userProfile } = user;
+  res.json(userProfile);
+});
+
+app.listen(3000, () =&gt; {
+  console.log(&#39;セキュアなサーバーが起動しました&#39;);
+});
+</code></pre>
+<h3>CORS設定</h3>
+<pre><code class="language-bash">npm install cors
+</code></pre>
+<pre><code class="language-javascript">const express = require(&#39;express&#39;);
+const cors = require(&#39;cors&#39;);
+const app = express();
+
+// 基本的なCORS設定
+app.use(cors());
+
+// カスタムCORS設定
+const corsOptions = {
+  origin: [&#39;http://localhost:3000&#39;, &#39;https://mydomain.com&#39;],
+  methods: [&#39;GET&#39;, &#39;POST&#39;, &#39;PUT&#39;, &#39;DELETE&#39;],
+  allowedHeaders: [&#39;Content-Type&#39;, &#39;Authorization&#39;],
+  credentials: true
+};
+
+app.use(cors(corsOptions));
+
+app.listen(3000);
+</code></pre>
+<h2>実践的なアプリケーション</h2>
+<h3>ブログAPI</h3>
+<pre><code class="language-javascript">const express = require(&#39;express&#39;);
+const app = express();
+
+app.use(express.json());
+
+// サンプルデータ
+let posts = [
+  {
+    id: 1,
+    title: &#39;Express.js入門&#39;,
+    content: &#39;Express.jsの基本的な使い方について...&#39;,
+    author: &#39;田中太郎&#39;,
+    createdAt: new Date(&#39;2024-01-01&#39;),
+    updatedAt: new Date(&#39;2024-01-01&#39;),
+    tags: [&#39;Express&#39;, &#39;Node.js&#39;, &#39;Web開発&#39;]
+  }
+];
+
+let comments = [
+  {
+    id: 1,
+    postId: 1,
+    author: &#39;佐藤花子&#39;,
+    content: &#39;とても参考になりました！&#39;,
+    createdAt: new Date(&#39;2024-01-02&#39;)
+  }
+];
+
+// 全投稿取得
+app.get(&#39;/api/posts&#39;, (req, res) =&gt; {
+  const { page = 1, limit = 10, tag, author } = req.query;
+  
+  let filteredPosts = posts;
+  
+  // タグフィルター
+  if (tag) {
+    filteredPosts = filteredPosts.filter(post =&gt; 
+      post.tags.some(t =&gt; t.toLowerCase().includes(tag.toLowerCase()))
+    );
+  }
+  
+  // 著者フィルター
+  if (author) {
+    filteredPosts = filteredPosts.filter(post =&gt; 
+      post.author.toLowerCase().includes(author.toLowerCase())
+    );
+  }
+  
+  // ページネーション
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
+  const paginatedPosts = filteredPosts.slice(startIndex, endIndex);
+  
+  res.json({
+    posts: paginatedPosts,
+    totalPosts: filteredPosts.length,
+    currentPage: parseInt(page),
+    totalPages: Math.ceil(filteredPosts.length / limit)
+  });
+});
+
+// 特定投稿取得
+app.get(&#39;/api/posts/:id&#39;, (req, res) =&gt; {
+  const postId = parseInt(req.params.id);
+  const post = posts.find(p =&gt; p.id === postId);
+  
+  if (!post) {
+    return res.status(404).json({ error: &#39;投稿が見つかりません&#39; });
+  }
+  
+  // その投稿のコメントも含める
+  const postComments = comments.filter(c =&gt; c.postId === postId);
+  
+  res.json({
+    ...post,
+    comments: postComments
+  });
+});
+
+// 投稿作成
+app.post(&#39;/api/posts&#39;, (req, res) =&gt; {
+  const { title, content, author, tags = [] } = req.body;
+  
+  // バリデーション
+  if (!title || !content || !author) {
+    return res.status(400).json({ 
+      error: &#39;タイトル、内容、著者は必須です&#39; 
+    });
+  }
+  
+  const newPost = {
+    id: posts.length + 1,
+    title,
+    content,
+    author,
+    tags,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  };
+  
+  posts.push(newPost);
+  res.status(201).json(newPost);
+});
+
+// 投稿更新
+app.put(&#39;/api/posts/:id&#39;, (req, res) =&gt; {
+  const postId = parseInt(req.params.id);
+  const postIndex = posts.findIndex(p =&gt; p.id === postId);
+  
+  if (postIndex === -1) {
+    return res.status(404).json({ error: &#39;投稿が見つかりません&#39; });
+  }
+  
+  const { title, content, tags } = req.body;
+  
+  posts[postIndex] = {
+    ...posts[postIndex],
+    ...(title &amp;&amp; { title }),
+    ...(content &amp;&amp; { content }),
+    ...(tags &amp;&amp; { tags }),
+    updatedAt: new Date()
+  };
+  
+  res.json(posts[postIndex]);
+});
+
+// 投稿削除
+app.delete(&#39;/api/posts/:id&#39;, (req, res) =&gt; {
+  const postId = parseInt(req.params.id);
+  const postIndex = posts.findIndex(p =&gt; p.id === postId);
+  
+  if (postIndex === -1) {
+    return res.status(404).json({ error: &#39;投稿が見つかりません&#39; });
+  }
+  
+  // 関連するコメントも削除
+  comments = comments.filter(c =&gt; c.postId !== postId);
+  posts.splice(postIndex, 1);
+  
+  res.status(204).send();
+});
+
+// コメント追加
+app.post(&#39;/api/posts/:id/comments&#39;, (req, res) =&gt; {
+  const postId = parseInt(req.params.id);
+  const post = posts.find(p =&gt; p.id === postId);
+  
+  if (!post) {
+    return res.status(404).json({ error: &#39;投稿が見つかりません&#39; });
+  }
+  
+  const { author, content } = req.body;
+  
+  if (!author || !content) {
+    return res.status(400).json({ 
+      error: &#39;著者と内容は必須です&#39; 
+    });
+  }
+  
+  const newComment = {
+    id: comments.length + 1,
+    postId,
+    author,
+    content,
+    createdAt: new Date()
+  };
+  
+  comments.push(newComment);
+  res.status(201).json(newComment);
+});
+
+// タグ一覧取得
+app.get(&#39;/api/tags&#39;, (req, res) =&gt; {
+  const allTags = posts.flatMap(post =&gt; post.tags);
+  const uniqueTags = [...new Set(allTags)];
+  res.json(uniqueTags);
+});
+
+app.listen(3000, () =&gt; {
+  console.log(&#39;ブログAPI サーバーが起動しました&#39;);
+});
+</code></pre>
+<h3>WebSocketチャット（Socket.io）</h3>
+<pre><code class="language-bash">npm install socket.io
+</code></pre>
+<pre><code class="language-javascript">const express = require(&#39;express&#39;);
+const http = require(&#39;http&#39;);
+const socketIo = require(&#39;socket.io&#39;);
+const path = require(&#39;path&#39;);
+
+const app = express();
+const server = http.createServer(app);
+const io = socketIo(server);
+
+app.use(express.static(path.join(__dirname, &#39;public&#39;)));
+
+// チャットルームとユーザー管理
+const rooms = new Map();
+const users = new Map();
+
+io.on(&#39;connection&#39;, (socket) =&gt; {
+  console.log(&#39;ユーザーが接続しました:&#39;, socket.id);
+  
+  // ユーザー参加
+  socket.on(&#39;join&#39;, (data) =&gt; {
+    const { username, room } = data;
+    
+    socket.username = username;
+    socket.room = room;
+    socket.join(room);
+    
+    // ユーザー情報を保存
+    users.set(socket.id, { username, room });
+    
+    // ルーム情報を更新
+    if (!rooms.has(room)) {
+      rooms.set(room, new Set());
+    }
+    rooms.get(room).add(socket.id);
+    
+    // 参加通知
+    socket.to(room).emit(&#39;user-joined&#39;, {
+      username,
+      message: `${username}さんがチャットに参加しました`,
+      timestamp: new Date()
+    });
+    
+    // ルーム内のユーザー一覧を送信
+    const roomUsers = Array.from(rooms.get(room)).map(id =&gt; {
+      const user = users.get(id);
+      return user ? user.username : null;
+    }).filter(Boolean);
+    
+    io.to(room).emit(&#39;room-users&#39;, roomUsers);
+  });
+  
+  // メッセージ送信
+  socket.on(&#39;message&#39;, (data) =&gt; {
+    const user = users.get(socket.id);
+    if (!user) return;
+    
+    const messageData = {
+      id: Date.now(),
+      username: user.username,
+      message: data.message,
+      timestamp: new Date(),
+      room: user.room
+    };
+    
+    io.to(user.room).emit(&#39;message&#39;, messageData);
+  });
+  
+  // タイピング状態
+  socket.on(&#39;typing&#39;, (isTyping) =&gt; {
+    const user = users.get(socket.id);
+    if (!user) return;
+    
+    socket.to(user.room).emit(&#39;typing&#39;, {
+      username: user.username,
+      isTyping
+    });
+  });
+  
+  // 切断処理
+  socket.on(&#39;disconnect&#39;, () =&gt; {
+    const user = users.get(socket.id);
+    if (user) {
+      // ルームからユーザーを削除
+      if (rooms.has(user.room)) {
+        rooms.get(user.room).delete(socket.id);
+        if (rooms.get(user.room).size === 0) {
+          rooms.delete(user.room);
+        }
+      }
+      
+      // 退出通知
+      socket.to(user.room).emit(&#39;user-left&#39;, {
+        username: user.username,
+        message: `${user.username}さんがチャットから退出しました`,
+        timestamp: new Date()
+      });
+      
+      // 更新されたユーザー一覧を送信
+      if (rooms.has(user.room)) {
+        const roomUsers = Array.from(rooms.get(user.room)).map(id =&gt; {
+          const u = users.get(id);
+          return u ? u.username : null;
+        }).filter(Boolean);
+        
+        io.to(user.room).emit(&#39;room-users&#39;, roomUsers);
+      }
+      
+      users.delete(socket.id);
+    }
+    
+    console.log(&#39;ユーザーが切断しました:&#39;, socket.id);
+  });
+});
+
+// REST API
+app.get(&#39;/api/rooms&#39;, (req, res) =&gt; {
+  const roomList = Array.from(rooms.keys()).map(room =&gt; ({
+    name: room,
+    userCount: rooms.get(room).size
+  }));
+  res.json(roomList);
+});
+
+server.listen(3000, () =&gt; {
+  console.log(&#39;チャットサーバーが起動しました: http://localhost:3000&#39;);
+});
+</code></pre>
+<h2>デプロイメント</h2>
+<h3>Herokuデプロイ</h3>
+<pre><code class="language-json">// package.json
+{
+  &quot;scripts&quot;: {
+    &quot;start&quot;: &quot;node app.js&quot;,
+    &quot;dev&quot;: &quot;nodemon app.js&quot;
+  },
+  &quot;engines&quot;: {
+    &quot;node&quot;: &quot;&gt;=14.0.0&quot;
+  }
+}
+</code></pre>
+<p><code>Procfile</code>:</p>
+<pre><code>web: node app.js
+</code></pre>
+<h3>環境変数設定</h3>
+<pre><code class="language-javascript">const express = require(&#39;express&#39;);
+const app = express();
+
+// 環境変数の設定
+const PORT = process.env.PORT || 3000;
+const NODE_ENV = process.env.NODE_ENV || &#39;development&#39;;
+const DATABASE_URL = process.env.DATABASE_URL;
+
+app.get(&#39;/&#39;, (req, res) =&gt; {
+  res.json({
+    message: &#39;Express App&#39;,
+    environment: NODE_ENV,
+    port: PORT
+  });
+});
+
+app.listen(PORT, () =&gt; {
+  console.log(`サーバーが http://localhost:${PORT} で起動しました`);
+});
+</code></pre>
+<h3>PM2を使用したプロダクション運用</h3>
+<pre><code class="language-bash">npm install -g pm2
+</code></pre>
+<p><code>ecosystem.config.js</code>:</p>
+<pre><code class="language-javascript">module.exports = {
+  apps: [{
+    name: &#39;express-app&#39;,
+    script: &#39;app.js&#39;,
+    instances: &#39;max&#39;,
+    exec_mode: &#39;cluster&#39;,
+    env: {
+      NODE_ENV: &#39;development&#39;
+    },
+    env_production: {
+      NODE_ENV: &#39;production&#39;,
+      PORT: 3000
+    },
+    error_file: &#39;./logs/err.log&#39;,
+    out_file: &#39;./logs/out.log&#39;,
+    log_file: &#39;./logs/combined.log&#39;,
+    time: true
+  }]
+};
+</code></pre>
+<p>コマンド:</p>
+<pre><code class="language-bash"># アプリ起動
+pm2 start ecosystem.config.js --env production
+
+# ステータス確認
+pm2 status
+
+# ログ確認
+pm2 logs
+
+# 再起動
+pm2 restart express-app
+
+# 停止
+pm2 stop express-app
+</code></pre>
+<h3>Docker化</h3>
+<p><code>Dockerfile</code>:</p>
+<pre><code class="language-dockerfile">FROM node:18-alpine
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm ci --only=production
+
+COPY . .
+
+EXPOSE 3000
+
+USER node
+
+CMD [&quot;node&quot;, &quot;app.js&quot;]
+</code></pre>
+<p><code>docker-compose.yml</code>:</p>
+<pre><code class="language-yaml">version: &#39;3.8&#39;
+services:
+  app:
+    build: .
+    ports:
+      - &quot;3000:3000&quot;
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ./logs:/app/logs
+    restart: unless-stopped
+</code></pre>
+<h2>次のステップ</h2>
+<h3>学習すべき高度なトピック</h3>
+<ol>
 <li><p><strong>データベース統合</strong></p>
 <ul>
 <li>MongoDB (Mongoose)</li>
@@ -299,7 +2091,8 @@
 </ul>
 </li>
 </ol>
-<hundefined id="object-object">[object Object]</hundefined><ol>
+<h3>実践プロジェクト案</h3>
+<ol>
 <li><p><strong>ECサイトAPI</strong></p>
 <ul>
 <li>商品管理</li>
@@ -330,13 +2123,15 @@
 </ul>
 </li>
 </ol>
-<hundefined id="object-object">[object Object]</hundefined><ul>
+<h3>推奨リソース</h3>
+<ul>
 <li><a href="https://expressjs.com/">Express.js 公式ドキュメント</a></li>
 <li><a href="https://github.com/goldbergyoni/nodebestpractices">Node.js ベストプラクティス</a></li>
 <li><a href="https://developer.mozilla.org/en-US/docs/Web/API">MDN Web API リファレンス</a></li>
 <li><a href="https://restfulapi.net/">REST API 設計ガイド</a></li>
 </ul>
-<hundefined id="object-object">[object Object]</hundefined><p>このチュートリアルでは、Express.jsの基本概念から実践的な応用まで幅広くカバーしました。Express.jsは柔軟で強力なフレームワークですが、適切な設計とセキュリティ対策が重要です。</p>
+<h2>まとめ</h2>
+<p>このチュートリアルでは、Express.jsの基本概念から実践的な応用まで幅広くカバーしました。Express.jsは柔軟で強力なフレームワークですが、適切な設計とセキュリティ対策が重要です。</p>
 <p>重要なポイント：</p>
 <ul>
 <li><strong>ルーティング</strong>でAPIエンドポイントを整理</li>
@@ -347,52 +2142,20 @@
 </ul>
 <p>継続的な学習と実践を通じて、Express.jsの能力を最大限に活用してください！</p>
 
-        
-        <button type="button" class="btn btn-primary btn-top" onclick="scrollToTop()">
-            ↑ トップへ
-        </button>
-    </div>
+            
+            
+            <div class="navigation-buttons">
+                <a href="nodejs-tutorial.html" class="nav-btn">
+                    <i class="fas fa-arrow-left"></i> Node.js Tutorial
+                </a>
+                <a href="index.html" class="nav-btn">
+                    <i class="fas fa-home"></i> ホーム
+                </a>
+            </div>
+            
+        </div>
+    </main>
     
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
-    <script>
-        function scrollToTop() {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-        }
-        
-        // 目次のリンクにスムーススクロールを追加
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
-        
-        // コードブロックの言語指定
-        document.querySelectorAll('pre code').forEach((block) => {
-            if (!block.className.includes('language-')) {
-                block.className += ' language-javascript';
-            }
-        });
-    </script>
-    <div class="navigation-buttons">
-        <a href="nodejs-tutorial.html" class="nav-btn">
-            <i class="fas fa-arrow-left"></i> Node.js Tutorial
-        </a>
-        <a href="index.html" class="nav-btn">
-            <i class="fas fa-home"></i> ホーム
-        </a>
-    </div>
     <!-- Footer -->
     <footer class="footer">
         <div class="footer-content">
@@ -416,22 +2179,68 @@
     </footer>
 
     <!-- Back to Top Button -->
-    <button class="back-to-top" aria-label="トップへ戻る">
+    <button type="button" class="btn btn-primary btn-top" onclick="scrollToTop()">
         <i class="fas fa-arrow-up"></i>
     </button>
-
-
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
     <script src="assets/js/main.js"></script>
+    
     <script>
-        // Progress tracking
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+        
+        // 目次のリンクにスムーススクロールを追加
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // コードブロックにコピーボタンを追加
+        document.querySelectorAll('pre').forEach(pre => {
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'copy-btn';
+            copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
+            copyBtn.title = 'コードをコピー';
+            
+            copyBtn.addEventListener('click', async () => {
+                const code = pre.querySelector('code').textContent;
+                try {
+                    await navigator.clipboard.writeText(code);
+                    copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+                    setTimeout(() => {
+                        copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
+                    }, 2000);
+                } catch (err) {
+                    console.error('コピーに失敗しました:', err);
+                }
+            });
+            
+            pre.style.position = 'relative';
+            pre.appendChild(copyBtn);
+        });
+        
+        // プログレス追跡
         document.addEventListener('DOMContentLoaded', function() {
             const currentPage = window.location.pathname.split('/').pop();
             let progress = JSON.parse(localStorage.getItem('tutorialProgress') || '{}');
             
-            // Mark current page as visited
             progress[currentPage] = Math.max(progress[currentPage] || 0, 25);
             
-            // Update progress when user scrolls
             let maxScroll = 0;
             window.addEventListener('scroll', function() {
                 const scrollPercent = Math.round((window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100);
@@ -439,6 +2248,24 @@
                 progress[currentPage] = Math.max(progress[currentPage], Math.min(maxScroll, 100));
                 localStorage.setItem('tutorialProgress', JSON.stringify(progress));
             });
+        });
+        
+        // アニメーション効果
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in');
+                }
+            });
+        }, observerOptions);
+        
+        document.querySelectorAll('h2, h3, .table-responsive, blockquote, .alert').forEach(el => {
+            observer.observe(el);
         });
     </script>
 </body>
