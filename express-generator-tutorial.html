@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Express Application Generatorの使い方を学ぶ日本語チュートリアル。様々なテンプレートエンジンを使った実践的なサンプル付き。">
+    <meta name="keywords" content="Express, Generator, Node.js, Pug, EJS, Handlebars, テンプレートエンジン">
+    <title>Express Application Generator チュートリアル</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+    
+    <!-- Stylesheets -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <link href="assets/css/style.css" rel="stylesheet">
+    <link href="assets/css/tutorial.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="tutorial-header">
+        <nav class="navbar">
+            <a href="index.html" class="logo">Node.js Tutorial</a>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">ホーム</a></li>
+                <li><a href="nodejs-tutorial.html" class="nav-link">Node.js基礎</a></li>
+                <li><a href="express-tutorial.html" class="nav-link">Express.js</a></li>
+                <li><a href="#" class="nav-link active">Express Generator</a></li>
+            </ul>
+            <button class="nav-toggle" aria-label="メニューを開く">
+                <i class="fas fa-bars"></i>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Tutorial Hero -->
+    <section class="tutorial-hero" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+        <div class="container">
+            <h1>Express Application Generator</h1>
+            <p>Express アプリケーションの雛形を素早く作成する方法を学びます</p>
+            <div class="tutorial-meta">
+                <span><i class="fas fa-clock"></i> 約 1時間</span>
+                <span><i class="fas fa-signal"></i> 中級</span>
+                <span><i class="fas fa-calendar"></i> 最終更新: 2024年</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Progress Bar -->
+    <div class="progress-bar" id="progressBar"></div>
+
+    <!-- Tutorial Content -->
+    <div class="tutorial-container">
+        <aside class="tutorial-sidebar" id="sidebar">
+            <h3>目次</h3>
+            <ul class="sidebar-nav" id="tableOfContents">
+                <li><a href="#introduction" class="active">はじめに</a></li>
+                <li><a href="#installation">インストール方法</a></li>
+                <li><a href="#basic-usage">基本的な使い方</a></li>
+                <li><a href="#command-options">コマンドオプション</a></li>
+                <li><a href="#template-engines">テンプレートエンジン</a></li>
+                <li><a href="#pug-example">Pugサンプルアプリ</a></li>
+                <li><a href="#ejs-example">EJSサンプルアプリ</a></li>
+                <li><a href="#handlebars-example">Handlebarsサンプルアプリ</a></li>
+                <li><a href="#hogan-example">Hoganサンプルアプリ</a></li>
+                <li><a href="#comparison">テンプレートエンジンの比較</a></li>
+                <li><a href="#best-practices">ベストプラクティス</a></li>
+            </ul>
+        </aside>
+
+        <main class="tutorial-content">
+            <!-- Introduction -->
+            <section id="introduction" class="tutorial-section">
+                <h2>はじめに</h2>
+                <p>Express Application Generatorは、Expressアプリケーションの基本構造を素早く作成するためのコマンドラインツールです。プロジェクトの雛形を自動生成することで、開発の初期段階を大幅に短縮できます。</p>
+                
+                <div class="info-box">
+                    <h4><i class="fas fa-info-circle"></i> このチュートリアルで学べること</h4>
+                    <ul>
+                        <li>Express Generatorのインストールと基本的な使い方</li>
+                        <li>様々なテンプレートエンジンの特徴と使い分け</li>
+                        <li>Pug、EJS、Handlebars、Hoganを使った実践的なサンプル</li>
+                        <li>生成されたアプリケーションの構造とカスタマイズ方法</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Installation -->
+            <section id="installation" class="tutorial-section">
+                <h2>インストール方法</h2>
+                <p>Express Generatorは、Node.jsのバージョンによって異なる方法でインストールします。</p>
+
+                <h3>Node.js 8.2.0以降の場合</h3>
+                <p>npxコマンドを使用して、インストールせずに直接実行できます：</p>
+                <pre><code class="language-bash">npx express-generator</code></pre>
+
+                <h3>古いバージョンのNode.jsの場合</h3>
+                <p>npmを使ってグローバルにインストールします：</p>
+                <pre><code class="language-bash">npm install -g express-generator</code></pre>
+
+                <div class="tip-box">
+                    <h4><i class="fas fa-lightbulb"></i> ヒント</h4>
+                    <p>npxを使用する方法が推奨されています。これにより、常に最新バージョンのgeneratorを使用でき、グローバルな環境を汚染しません。</p>
+                </div>
+            </section>
+
+            <!-- Basic Usage -->
+            <section id="basic-usage" class="tutorial-section">
+                <h2>基本的な使い方</h2>
+                <p>Express Generatorの基本的な使用方法を見ていきましょう。</p>
+
+                <h3>シンプルなアプリケーションの作成</h3>
+                <pre><code class="language-bash"># アプリケーションを作成
+npx express-generator myapp
+
+# ディレクトリに移動
+cd myapp
+
+# 依存関係をインストール
+npm install
+
+# アプリケーションを起動
+DEBUG=myapp:* npm start</code></pre>
+
+                <h3>生成されるディレクトリ構造</h3>
+                <pre><code class="language-plaintext">myapp/
+├── app.js              # アプリケーションのメインファイル
+├── package.json        # プロジェクトの設定ファイル
+├── bin/
+│   └── www            # サーバー起動スクリプト
+├── public/            # 静的ファイル
+│   ├── images/
+│   ├── javascripts/
+│   └── stylesheets/
+│       └── style.css
+├── routes/            # ルーティング定義
+│   ├── index.js
+│   └── users.js
+└── views/             # ビューテンプレート
+    ├── error.pug
+    ├── index.pug
+    └── layout.pug</code></pre>
+            </section>
+
+            <!-- Command Options -->
+            <section id="command-options" class="tutorial-section">
+                <h2>コマンドオプション</h2>
+                <p>Express Generatorには様々なオプションが用意されています：</p>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>オプション</th>
+                                <th>説明</th>
+                                <th>使用例</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>-h, --help</code></td>
+                                <td>ヘルプ情報を表示</td>
+                                <td><code>express -h</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>--version</code></td>
+                                <td>バージョンを表示</td>
+                                <td><code>express --version</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>-e, --ejs</code></td>
+                                <td>EJSテンプレートエンジンを使用</td>
+                                <td><code>express -e myapp</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>--pug</code></td>
+                                <td>Pugテンプレートエンジンを使用（デフォルト）</td>
+                                <td><code>express --pug myapp</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>--hbs</code></td>
+                                <td>Handlebarsテンプレートエンジンを使用</td>
+                                <td><code>express --hbs myapp</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>-H, --hogan</code></td>
+                                <td>Hoganテンプレートエンジンを使用</td>
+                                <td><code>express -H myapp</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>-v, --view</code></td>
+                                <td>ビューエンジンを指定</td>
+                                <td><code>express --view=ejs myapp</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>-c, --css</code></td>
+                                <td>CSSプリプロセッサを指定</td>
+                                <td><code>express --css=sass myapp</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>--git</code></td>
+                                <td>.gitignoreファイルを生成</td>
+                                <td><code>express --git myapp</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>-f, --force</code></td>
+                                <td>既存ディレクトリに強制的に生成</td>
+                                <td><code>express -f myapp</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Template Engines -->
+            <section id="template-engines" class="tutorial-section">
+                <h2>テンプレートエンジン</h2>
+                <p>Express Generatorは複数のテンプレートエンジンをサポートしています。それぞれの特徴を理解して、プロジェクトに最適なものを選びましょう。</p>
+
+                <div class="comparison-grid">
+                    <div class="comparison-item">
+                        <h3>Pug（旧Jade）</h3>
+                        <ul>
+                            <li>インデントベースの簡潔な構文</li>
+                            <li>HTMLタグの省略が可能</li>
+                            <li>強力なミックスイン機能</li>
+                            <li>学習曲線がやや急</li>
+                        </ul>
+                    </div>
+                    <div class="comparison-item">
+                        <h3>EJS</h3>
+                        <ul>
+                            <li>HTMLに近い構文</li>
+                            <li>JavaScriptを直接埋め込み可能</li>
+                            <li>学習が容易</li>
+                            <li>シンプルで分かりやすい</li>
+                        </ul>
+                    </div>
+                    <div class="comparison-item">
+                        <h3>Handlebars</h3>
+                        <ul>
+                            <li>ロジックレステンプレート</li>
+                            <li>Mustache構文を拡張</li>
+                            <li>ヘルパー関数が使える</li>
+                            <li>セキュリティが高い</li>
+                        </ul>
+                    </div>
+                    <div class="comparison-item">
+                        <h3>Hogan</h3>
+                        <ul>
+                            <li>Mustache互換</li>
+                            <li>非常に高速</li>
+                            <li>軽量（3KB）</li>
+                            <li>Twitter社が開発</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Pug Example -->
+            <section id="pug-example" class="tutorial-section">
+                <h2>Pugサンプルアプリ</h2>
+                <p>Pugを使ったExpressアプリケーションを作成してみましょう。</p>
+
+                <h3>1. アプリケーションの生成</h3>
+                <pre><code class="language-bash">npx express-generator --view=pug pug-app
+cd pug-app
+npm install</code></pre>
+
+                <h3>2. ビューファイルの構造</h3>
+                <p><strong>views/layout.pug</strong></p>
+                <pre><code class="language-pug">doctype html
+html
+  head
+    title= title
+    link(rel='stylesheet', href='/stylesheets/style.css')
+  body
+    block content</code></pre>
+
+                <p><strong>views/index.pug</strong></p>
+                <pre><code class="language-pug">extends layout
+
+block content
+  h1= title
+  p Welcome to #{title}</code></pre>
+
+                <h3>3. カスタマイズ例</h3>
+                <p><strong>views/index.pug</strong>を編集してページを拡張：</p>
+                <pre><code class="language-pug">extends layout
+
+block content
+  .container
+    h1= title
+    p.lead Welcome to #{title} - Pugで作られたExpressアプリケーション
+    
+    .features
+      h2 特徴
+      ul
+        li インデントベースの簡潔な構文
+        li 強力なテンプレート継承
+        li ミックスインによる再利用可能なコンポーネント
+    
+    .example
+      h3 変数の使用例
+      - const items = ['Node.js', 'Express', 'Pug']
+      ul
+        each item in items
+          li= item
+    
+    button.btn.btn-primary(type='button') 
+      | クリックしてください</code></pre>
+
+                <h3>4. ルーターの修正</h3>
+                <p><strong>routes/index.js</strong></p>
+                <pre><code class="language-javascript">var express = require('express');
+var router = express.Router();
+
+/* GET home page. */
+router.get('/', function(req, res, next) {
+  res.render('index', { 
+    title: 'Pug Express App',
+    message: 'Pugテンプレートエンジンを使用しています'
+  });
+});
+
+module.exports = router;</code></pre>
+
+                <h3>5. アプリケーションの起動</h3>
+                <pre><code class="language-bash">DEBUG=pug-app:* npm start</code></pre>
+            </section>
+
+            <!-- EJS Example -->
+            <section id="ejs-example" class="tutorial-section">
+                <h2>EJSサンプルアプリ</h2>
+                <p>EJSを使ったExpressアプリケーションを作成します。</p>
+
+                <h3>1. アプリケーションの生成</h3>
+                <pre><code class="language-bash">npx express-generator --view=ejs ejs-app
+cd ejs-app
+npm install</code></pre>
+
+                <h3>2. ビューファイルの構造</h3>
+                <p><strong>views/index.ejs</strong></p>
+                <pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;&lt;%= title %&gt;&lt;/title&gt;
+    &lt;link rel='stylesheet' href='/stylesheets/style.css' /&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;h1&gt;&lt;%= title %&gt;&lt;/h1&gt;
+    &lt;p&gt;Welcome to &lt;%= title %&gt;&lt;/p&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+                <h3>3. レイアウトの実装</h3>
+                <p>EJSではレイアウト機能がないため、パーシャルを使います。</p>
+                
+                <p><strong>views/partials/header.ejs</strong></p>
+                <pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="ja"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;&lt;%= title %&gt;&lt;/title&gt;
+    &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"&gt;
+    &lt;link rel='stylesheet' href='/stylesheets/style.css' /&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;nav class="navbar navbar-expand-lg navbar-dark bg-dark"&gt;
+        &lt;div class="container"&gt;
+            &lt;a class="navbar-brand" href="/"&gt;EJS Express App&lt;/a&gt;
+        &lt;/div&gt;
+    &lt;/nav&gt;
+    &lt;div class="container mt-4"&gt;</code></pre>
+
+                <p><strong>views/partials/footer.ejs</strong></p>
+                <pre><code class="language-html">    &lt;/div&gt;
+    &lt;footer class="footer mt-5 py-3 bg-light"&gt;
+        &lt;div class="container text-center"&gt;
+            &lt;span class="text-muted"&gt;&copy; 2024 EJS Express App&lt;/span&gt;
+        &lt;/div&gt;
+    &lt;/footer&gt;
+    &lt;script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+                <h3>4. カスタマイズした index.ejs</h3>
+                <pre><code class="language-html">&lt;%- include('partials/header') %&gt;
+
+&lt;div class="row"&gt;
+    &lt;div class="col-md-8"&gt;
+        &lt;h1&gt;&lt;%= title %&gt;&lt;/h1&gt;
+        &lt;p class="lead"&gt;EJSテンプレートエンジンを使用したExpressアプリケーション&lt;/p&gt;
+        
+        &lt;h2&gt;特徴&lt;/h2&gt;
+        &lt;ul&gt;
+            &lt;li&gt;HTMLに近い構文で学習が容易&lt;/li&gt;
+            &lt;li&gt;JavaScriptコードを直接埋め込み可能&lt;/li&gt;
+            &lt;li&gt;条件分岐やループが簡単に書ける&lt;/li&gt;
+        &lt;/ul&gt;
+        
+        &lt;h3&gt;動的なコンテンツの例&lt;/h3&gt;
+        &lt;% const technologies = ['Node.js', 'Express', 'EJS', 'Bootstrap']; %&gt;
+        &lt;div class="row"&gt;
+            &lt;% technologies.forEach(function(tech) { %&gt;
+                &lt;div class="col-md-3 mb-3"&gt;
+                    &lt;div class="card"&gt;
+                        &lt;div class="card-body"&gt;
+                            &lt;h5 class="card-title"&gt;&lt;%= tech %&gt;&lt;/h5&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;% }); %&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    
+    &lt;div class="col-md-4"&gt;
+        &lt;h3&gt;サイドバー&lt;/h3&gt;
+        &lt;% if (user) { %&gt;
+            &lt;p&gt;ようこそ、&lt;%= user.name %&gt;さん！&lt;/p&gt;
+        &lt;% } else { %&gt;
+            &lt;p&gt;ゲストユーザーです&lt;/p&gt;
+        &lt;% } %&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;%- include('partials/footer') %&gt;</code></pre>
+
+                <h3>5. ルーターの更新</h3>
+                <pre><code class="language-javascript">var express = require('express');
+var router = express.Router();
+
+/* GET home page. */
+router.get('/', function(req, res, next) {
+  res.render('index', { 
+    title: 'EJS Express App',
+    user: { name: '太郎' } // サンプルユーザーデータ
+  });
+});
+
+module.exports = router;</code></pre>
+            </section>
+
+            <!-- Handlebars Example -->
+            <section id="handlebars-example" class="tutorial-section">
+                <h2>Handlebarsサンプルアプリ</h2>
+                <p>Handlebarsを使ったExpressアプリケーションを作成します。</p>
+
+                <h3>1. アプリケーションの生成</h3>
+                <pre><code class="language-bash">npx express-generator --view=hbs hbs-app
+cd hbs-app
+npm install</code></pre>
+
+                <h3>2. ビューファイルの構造</h3>
+                <p><strong>views/layout.hbs</strong></p>
+                <pre><code class="language-handlebars">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;{{title}}&lt;/title&gt;
+    &lt;link rel='stylesheet' href='/stylesheets/style.css' /&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    {{{body}}}
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+                <p><strong>views/index.hbs</strong></p>
+                <pre><code class="language-handlebars">&lt;h1&gt;{{title}}&lt;/h1&gt;
+&lt;p&gt;Welcome to {{title}}&lt;/p&gt;</code></pre>
+
+                <h3>3. ヘルパー関数の追加</h3>
+                <p><strong>app.js</strong>に以下を追加：</p>
+                <pre><code class="language-javascript">// Handlebarsの設定
+var hbs = require('hbs');
+
+// カスタムヘルパーの登録
+hbs.registerHelper('uppercase', function(str) {
+  return str.toUpperCase();
+});
+
+hbs.registerHelper('list', function(items, options) {
+  var out = "&lt;ul&gt;";
+  for(var i=0, l=items.length; i&lt;l; i++) {
+    out = out + "&lt;li&gt;" + options.fn(items[i]) + "&lt;/li&gt;";
+  }
+  return out + "&lt;/ul&gt;";
+});
+
+// パーシャルの登録
+hbs.registerPartials(__dirname + '/views/partials');</code></pre>
+
+                <h3>4. カスタマイズしたビュー</h3>
+                <p><strong>views/index.hbs</strong></p>
+                <pre><code class="language-handlebars">&lt;div class="container"&gt;
+    &lt;h1&gt;{{uppercase title}}&lt;/h1&gt;
+    &lt;p class="lead"&gt;Handlebarsテンプレートエンジンを使用したExpressアプリケーション&lt;/p&gt;
+    
+    &lt;h2&gt;特徴&lt;/h2&gt;
+    &lt;ul&gt;
+        &lt;li&gt;ロジックレステンプレート&lt;/li&gt;
+        &lt;li&gt;Mustache構文の拡張版&lt;/li&gt;
+        &lt;li&gt;カスタムヘルパー関数&lt;/li&gt;
+        &lt;li&gt;パーシャルによる再利用&lt;/li&gt;
+    &lt;/ul&gt;
+    
+    &lt;h3&gt;技術スタック&lt;/h3&gt;
+    {{#list technologies}}
+        &lt;strong&gt;{{name}}&lt;/strong&gt; - {{description}}
+    {{/list}}
+    
+    {{#if showMessage}}
+        &lt;div class="alert alert-info"&gt;
+            &lt;p&gt;{{message}}&lt;/p&gt;
+        &lt;/div&gt;
+    {{/if}}
+    
+    {{&gt; userinfo user=currentUser}}
+&lt;/div&gt;</code></pre>
+
+                <p><strong>views/partials/userinfo.hbs</strong></p>
+                <pre><code class="language-handlebars">&lt;div class="user-info"&gt;
+    {{#if user}}
+        &lt;h4&gt;ユーザー情報&lt;/h4&gt;
+        &lt;p&gt;名前: {{user.name}}&lt;/p&gt;
+        &lt;p&gt;メール: {{user.email}}&lt;/p&gt;
+    {{else}}
+        &lt;p&gt;ログインしていません&lt;/p&gt;
+    {{/if}}
+&lt;/div&gt;</code></pre>
+
+                <h3>5. ルーターの更新</h3>
+                <pre><code class="language-javascript">var express = require('express');
+var router = express.Router();
+
+/* GET home page. */
+router.get('/', function(req, res, next) {
+  res.render('index', { 
+    title: 'Handlebars Express App',
+    technologies: [
+      { name: 'Node.js', description: 'JavaScriptランタイム' },
+      { name: 'Express', description: 'Webフレームワーク' },
+      { name: 'Handlebars', description: 'テンプレートエンジン' }
+    ],
+    showMessage: true,
+    message: 'Handlebarsは安全で使いやすいテンプレートエンジンです',
+    currentUser: {
+      name: '山田太郎',
+      email: 'taro@example.com'
+    }
+  });
+});
+
+module.exports = router;</code></pre>
+            </section>
+
+            <!-- Hogan Example -->
+            <section id="hogan-example" class="tutorial-section">
+                <h2>Hoganサンプルアプリ</h2>
+                <p>Hoganを使ったExpressアプリケーションを作成します。</p>
+
+                <h3>1. アプリケーションの生成</h3>
+                <pre><code class="language-bash">npx express-generator --view=hogan hogan-app
+cd hogan-app
+npm install</code></pre>
+
+                <div class="warning-box">
+                    <h4><i class="fas fa-exclamation-triangle"></i> 注意</h4>
+                    <p>Hoganテンプレートエンジンを使用した場合、ビューファイルは自動生成されません。手動で作成する必要があります。</p>
+                </div>
+
+                <h3>2. ビューファイルの作成</h3>
+                <p><strong>views/index.hjs</strong>を作成：</p>
+                <pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;{{ title }}&lt;/title&gt;
+    &lt;link rel='stylesheet' href='/stylesheets/style.css' /&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;div class="container"&gt;
+      &lt;h1&gt;{{ title }}&lt;/h1&gt;
+      &lt;p class="lead"&gt;{{ description }}&lt;/p&gt;
+      
+      &lt;h2&gt;特徴&lt;/h2&gt;
+      &lt;ul&gt;
+        {{#features}}
+          &lt;li&gt;{{ . }}&lt;/li&gt;
+        {{/features}}
+      &lt;/ul&gt;
+      
+      &lt;h3&gt;パフォーマンス&lt;/h3&gt;
+      &lt;p&gt;Hoganは{{ performance }}なテンプレートエンジンです。&lt;/p&gt;
+      
+      {{#showBenchmark}}
+      &lt;div class="benchmark"&gt;
+        &lt;h4&gt;ベンチマーク結果&lt;/h4&gt;
+        &lt;table class="table"&gt;
+          &lt;thead&gt;
+            &lt;tr&gt;
+              &lt;th&gt;エンジン&lt;/th&gt;
+              &lt;th&gt;処理時間&lt;/th&gt;
+            &lt;/tr&gt;
+          &lt;/thead&gt;
+          &lt;tbody&gt;
+            {{#benchmarks}}
+            &lt;tr&gt;
+              &lt;td&gt;{{ engine }}&lt;/td&gt;
+              &lt;td&gt;{{ time }}ms&lt;/td&gt;
+            &lt;/tr&gt;
+            {{/benchmarks}}
+          &lt;/tbody&gt;
+        &lt;/table&gt;
+      &lt;/div&gt;
+      {{/showBenchmark}}
+    &lt;/div&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+                <p><strong>views/error.hjs</strong>を作成：</p>
+                <pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;Error&lt;/title&gt;
+    &lt;link rel='stylesheet' href='/stylesheets/style.css' /&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;h1&gt;{{ message }}&lt;/h1&gt;
+    &lt;h2&gt;{{ error.status }}&lt;/h2&gt;
+    &lt;pre&gt;{{ error.stack }}&lt;/pre&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+                <h3>3. app.jsの設定</h3>
+                <pre><code class="language-javascript">// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'hjs');
+
+// Hoganの設定を追加
+app.engine('hjs', require('hogan-express'));</code></pre>
+
+                <h3>4. ルーターの設定</h3>
+                <p><strong>routes/index.js</strong></p>
+                <pre><code class="language-javascript">var express = require('express');
+var router = express.Router();
+
+/* GET home page. */
+router.get('/', function(req, res, next) {
+  res.render('index', {
+    title: 'Hogan Express App',
+    description: 'Hogan.jsは、Twitterが開発した高速で軽量なテンプレートエンジンです',
+    features: [
+      'Mustache構文に完全準拠',
+      '非常に高速な処理',
+      '軽量（わずか3KB）',
+      'ブラウザとNode.js両方で動作'
+    ],
+    performance: '非常に高速',
+    showBenchmark: true,
+    benchmarks: [
+      { engine: 'Hogan', time: 12 },
+      { engine: 'Handlebars', time: 45 },
+      { engine: 'EJS', time: 67 },
+      { engine: 'Pug', time: 89 }
+    ]
+  });
+});
+
+module.exports = router;</code></pre>
+
+                <h3>5. パッケージの追加インストール</h3>
+                <pre><code class="language-bash">npm install hogan-express --save</code></pre>
+            </section>
+
+            <!-- Comparison -->
+            <section id="comparison" class="tutorial-section">
+                <h2>テンプレートエンジンの比較</h2>
+                <p>各テンプレートエンジンの特徴を比較して、プロジェクトに最適なものを選びましょう。</p>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered comparison-table">
+                        <thead>
+                            <tr>
+                                <th>特徴</th>
+                                <th>Pug</th>
+                                <th>EJS</th>
+                                <th>Handlebars</th>
+                                <th>Hogan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>構文</strong></td>
+                                <td>インデントベース</td>
+                                <td>HTML埋め込み</td>
+                                <td>Mustache拡張</td>
+                                <td>Mustache準拠</td>
+                            </tr>
+                            <tr>
+                                <td><strong>学習曲線</strong></td>
+                                <td>やや急</td>
+                                <td>緩やか</td>
+                                <td>普通</td>
+                                <td>緩やか</td>
+                            </tr>
+                            <tr>
+                                <td><strong>パフォーマンス</strong></td>
+                                <td>普通</td>
+                                <td>高速</td>
+                                <td>普通</td>
+                                <td>非常に高速</td>
+                            </tr>
+                            <tr>
+                                <td><strong>ファイルサイズ</strong></td>
+                                <td>大きい</td>
+                                <td>中程度</td>
+                                <td>中程度</td>
+                                <td>非常に小さい（3KB）</td>
+                            </tr>
+                            <tr>
+                                <td><strong>機能性</strong></td>
+                                <td>非常に豊富</td>
+                                <td>豊富</td>
+                                <td>適度</td>
+                                <td>最小限</td>
+                            </tr>
+                            <tr>
+                                <td><strong>セキュリティ</strong></td>
+                                <td>高い</td>
+                                <td>要注意</td>
+                                <td>非常に高い</td>
+                                <td>高い</td>
+                            </tr>
+                            <tr>
+                                <td><strong>おすすめ用途</strong></td>
+                                <td>複雑なレイアウト</td>
+                                <td>シンプルなアプリ</td>
+                                <td>大規模アプリ</td>
+                                <td>高速性重視</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>選択の指針</h3>
+                <div class="selection-guide">
+                    <div class="guide-item">
+                        <h4>Pugを選ぶべき場合</h4>
+                        <ul>
+                            <li>HTMLの記述量を減らしたい</li>
+                            <li>強力なテンプレート継承が必要</li>
+                            <li>チームメンバーがPugに慣れている</li>
+                        </ul>
+                    </div>
+                    <div class="guide-item">
+                        <h4>EJSを選ぶべき場合</h4>
+                        <ul>
+                            <li>HTMLの知識をそのまま活かしたい</li>
+                            <li>JavaScriptのロジックを直接書きたい</li>
+                            <li>学習コストを最小限にしたい</li>
+                        </ul>
+                    </div>
+                    <div class="guide-item">
+                        <h4>Handlebarsを選ぶべき場合</h4>
+                        <ul>
+                            <li>ビューとロジックを明確に分離したい</li>
+                            <li>セキュリティを重視する</li>
+                            <li>フロントエンドでも同じテンプレートを使いたい</li>
+                        </ul>
+                    </div>
+                    <div class="guide-item">
+                        <h4>Hoganを選ぶべき場合</h4>
+                        <ul>
+                            <li>パフォーマンスが最優先</li>
+                            <li>ファイルサイズを最小限にしたい</li>
+                            <li>シンプルなテンプレート機能で十分</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Best Practices -->
+            <section id="best-practices" class="tutorial-section">
+                <h2>ベストプラクティス</h2>
+                <p>Express Generatorを使った開発で推奨される実践的なアドバイスです。</p>
+
+                <h3>1. プロジェクト構造の拡張</h3>
+                <p>生成された基本構造を、プロジェクトの規模に応じて拡張しましょう：</p>
+                <pre><code class="language-plaintext">myapp/
+├── app.js
+├── package.json
+├── bin/
+│   └── www
+├── config/           # 設定ファイル
+│   ├── database.js
+│   └── auth.js
+├── controllers/      # コントローラー層
+│   ├── userController.js
+│   └── productController.js
+├── models/          # データモデル
+│   ├── User.js
+│   └── Product.js
+├── middleware/      # カスタムミドルウェア
+│   ├── auth.js
+│   └── validation.js
+├── public/
+├── routes/
+├── views/
+├── tests/           # テストファイル
+│   ├── unit/
+│   └── integration/
+└── utils/           # ユーティリティ関数
+    └── helpers.js</code></pre>
+
+                <h3>2. 環境変数の管理</h3>
+                <p><strong>.env</strong>ファイルを使用して環境設定を管理：</p>
+                <pre><code class="language-bash">npm install dotenv --save</code></pre>
+
+                <p><strong>.env</strong></p>
+                <pre><code class="language-plaintext">NODE_ENV=development
+PORT=3000
+DATABASE_URL=mongodb://localhost:27017/myapp
+SESSION_SECRET=your-secret-key</code></pre>
+
+                <p><strong>app.js</strong>の先頭に追加：</p>
+                <pre><code class="language-javascript">require('dotenv').config();</code></pre>
+
+                <h3>3. エラーハンドリングの改善</h3>
+                <pre><code class="language-javascript">// カスタムエラーハンドラー
+app.use((err, req, res, next) => {
+  // ログ記録
+  console.error(err.stack);
+  
+  // 開発環境では詳細なエラー情報を表示
+  if (app.get('env') === 'development') {
+    res.status(err.status || 500);
+    res.render('error', {
+      message: err.message,
+      error: err
+    });
+  } else {
+    // 本番環境では一般的なエラーメッセージ
+    res.status(err.status || 500);
+    res.render('error', {
+      message: 'エラーが発生しました',
+      error: {}
+    });
+  }
+});</code></pre>
+
+                <h3>4. セキュリティの強化</h3>
+                <pre><code class="language-bash">npm install helmet cors express-rate-limit --save</code></pre>
+
+                <pre><code class="language-javascript">const helmet = require('helmet');
+const cors = require('cors');
+const rateLimit = require('express-rate-limit');
+
+// セキュリティヘッダーの設定
+app.use(helmet());
+
+// CORS設定
+app.use(cors({
+  origin: process.env.ALLOWED_ORIGINS?.split(',') || '*'
+}));
+
+// レート制限
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15分
+  max: 100 // リクエスト数の上限
+});
+app.use('/api/', limiter);</code></pre>
+
+                <h3>5. ロギングの実装</h3>
+                <pre><code class="language-bash">npm install winston --save</code></pre>
+
+                <pre><code class="language-javascript">const winston = require('winston');
+
+const logger = winston.createLogger({
+  level: 'info',
+  format: winston.format.json(),
+  defaultMeta: { service: 'user-service' },
+  transports: [
+    new winston.transports.File({ filename: 'error.log', level: 'error' }),
+    new winston.transports.File({ filename: 'combined.log' })
+  ]
+});
+
+if (process.env.NODE_ENV !== 'production') {
+  logger.add(new winston.transports.Console({
+    format: winston.format.simple()
+  }));
+}</code></pre>
+
+                <h3>6. デプロイメントの準備</h3>
+                <p><strong>package.json</strong>にスクリプトを追加：</p>
+                <pre><code class="language-json">{
+  "scripts": {
+    "start": "node ./bin/www",
+    "dev": "nodemon ./bin/www",
+    "test": "jest",
+    "lint": "eslint .",
+    "build": "npm run lint && npm test"
+  }
+}</code></pre>
+
+                <p><strong>プロセスマネージャー（PM2）の使用</strong></p>
+                <pre><code class="language-bash"># PM2のインストール
+npm install pm2 -g
+
+# アプリケーションの起動
+pm2 start ./bin/www --name myapp
+
+# クラスターモードで起動
+pm2 start ./bin/www -i max --name myapp</code></pre>
+            </section>
+
+            <!-- Summary -->
+            <section class="tutorial-section">
+                <h2>まとめ</h2>
+                <p>Express Application Generatorは、Expressアプリケーションの開発を素早く始めるための強力なツールです。このチュートリアルで学んだ内容を活用して、効率的にWebアプリケーションを構築しましょう。</p>
+                
+                <div class="summary-grid">
+                    <div class="summary-item">
+                        <h4>学んだこと</h4>
+                        <ul>
+                            <li>Express Generatorの基本的な使い方</li>
+                            <li>4つの主要なテンプレートエンジンの特徴</li>
+                            <li>各エンジンでの実装方法</li>
+                            <li>プロジェクト構造の拡張方法</li>
+                        </ul>
+                    </div>
+                    <div class="summary-item">
+                        <h4>次のステップ</h4>
+                        <ul>
+                            <li>データベースとの連携</li>
+                            <li>認証システムの実装</li>
+                            <li>RESTful APIの構築</li>
+                            <li>実際のプロジェクトへの適用</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Navigation -->
+            <div class="tutorial-navigation">
+                <a href="express-tutorial.html" class="btn btn-outline-primary">
+                    <i class="fas fa-arrow-left"></i> Express.js チュートリアル
+                </a>
+                <a href="index.html" class="btn btn-outline-primary">
+                    <i class="fas fa-home"></i> ホームへ戻る
+                </a>
+            </div>
+        </main>
+    </div>
+
+    <!-- Back to Top Button -->
+    <button class="back-to-top" aria-label="トップへ戻る">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-pug.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-handlebars.min.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/tutorial.js"></script>
+</body>
+</html></code></pre>
+            </section>
+
+            <!-- Navigation -->
+            <div class="tutorial-navigation">
+                <a href="express-tutorial.html" class="btn btn-outline-primary">
+                    <i class="fas fa-arrow-left"></i> Express.js チュートリアル
+                </a>
+                <a href="index.html" class="btn btn-outline-primary">
+                    <i class="fas fa-home"></i> ホームへ戻る
+                </a>
+            </div>
+        </main>
+    </div>
+
+    <!-- Back to Top Button -->
+    <button class="back-to-top" aria-label="トップへ戻る">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-pug.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-handlebars.min.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/tutorial.js"></script>
+</body>
+</html>
