@@ -1,0 +1,3906 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Node.jsでMongoDB、PostgreSQL、Redisを使ったデータベース連携を学ぶ包括的なチュートリアル">
+    <meta name="keywords" content="Node.js, MongoDB, PostgreSQL, Redis, Mongoose, Sequelize, データベース, ORM">
+    <title>データベース連携チュートリアル - Node.js</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗄️</text></svg>">
+    
+    <!-- Stylesheets -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <link href="assets/css/style.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #339933;
+            --secondary-color: #68217a;
+            --accent-color: #f39c12;
+            --dark-color: #2c3e50;
+            --text-color: #333;
+            --border-color: #dee2e6;
+            --shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: #f8f9fa;
+            padding-top: 0;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        main {
+            padding: 2rem 0;
+            background: white;
+            min-height: calc(100vh - 200px);
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            color: var(--dark-color);
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        
+        h1 {
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-top: 1rem;
+            font-size: 2.5rem;
+        }
+        
+        h2 {
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 8px;
+            font-size: 2rem;
+            color: var(--primary-color);
+        }
+        
+        h3 {
+            font-size: 1.5rem;
+            color: var(--secondary-color);
+        }
+        
+        /* コードスタイル */
+        code {
+            background-color: #f1f3f4;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: #d73a49;
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+        }
+        
+        pre {
+            background-color: #2d3748 !important;
+            border: 1px solid #4a5568;
+            border-radius: 8px;
+            padding: 1.5rem;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            position: relative;
+            box-shadow: var(--shadow);
+        }
+        
+        pre code {
+            background-color: transparent !important;
+            padding: 0;
+            color: #e2e8f0 !important;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        /* Prism.js のカスタマイズ */
+        .token.comment,
+        .token.prolog,
+        .token.doctype,
+        .token.cdata {
+            color: #68d391;
+        }
+        
+        .token.punctuation {
+            color: #e2e8f0;
+        }
+        
+        .token.property,
+        .token.tag,
+        .token.boolean,
+        .token.number,
+        .token.constant,
+        .token.symbol,
+        .token.deleted {
+            color: #f6e05e;
+        }
+        
+        .token.selector,
+        .token.attr-name,
+        .token.string,
+        .token.char,
+        .token.builtin,
+        .token.inserted {
+            color: #fc8181;
+        }
+        
+        .token.operator,
+        .token.entity,
+        .token.url,
+        .language-css .token.string,
+        .style .token.string {
+            color: #90cdf4;
+        }
+        
+        .token.atrule,
+        .token.attr-value,
+        .token.keyword {
+            color: #90cdf4;
+        }
+        
+        .token.function,
+        .token.class-name {
+            color: #b794f6;
+        }
+        
+        .token.regex,
+        .token.important,
+        .token.variable {
+            color: #fbb6ce;
+        }
+        
+        /* テーブルスタイル */
+        .table-responsive {
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        
+        table {
+            margin-bottom: 0;
+        }
+        
+        .table-dark th {
+            background-color: var(--dark-color) !important;
+            border-color: var(--border-color);
+        }
+        
+        /* リストスタイル */
+        ul, ol {
+            margin: 1rem 0;
+            padding-left: 2rem;
+        }
+        
+        li {
+            margin: 0.5rem 0;
+        }
+        
+        /* 警告・ヒントボックス */
+        .alert {
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: none;
+            box-shadow: var(--shadow);
+        }
+        
+        .alert-info {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            color: #1565c0;
+        }
+        
+        .alert-warning {
+            background: linear-gradient(135deg, #fff3e0, #ffcc02);
+            color: #e65100;
+        }
+        
+        .alert-success {
+            background: linear-gradient(135deg, #e8f5e8, #c8e6c9);
+            color: #2e7d32;
+        }
+        
+        .alert-danger {
+            background: linear-gradient(135deg, #ffebee, #ffcdd2);
+            color: #c62828;
+        }
+        
+        .info-box {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            border-left: 4px solid #2196f3;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+            box-shadow: var(--shadow);
+        }
+        
+        .tip-box {
+            background: linear-gradient(135deg, #fff3e0, #ffcc02);
+            border-left: 4px solid #ff9800;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+            box-shadow: var(--shadow);
+        }
+        
+        .warning-box {
+            background: linear-gradient(135deg, #ffebee, #ffcdd2);
+            border-left: 4px solid #f44336;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+            box-shadow: var(--shadow);
+        }
+        
+        /* グリッドレイアウト */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .comparison-item {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+        
+        .comparison-item h3 {
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 1rem;
+        }
+        
+        .comparison-item h4 {
+            color: var(--secondary-color);
+            margin-top: 0;
+            margin-bottom: 1rem;
+        }
+        
+        .best-practices-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .practice-item {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+        
+        .practice-item h3 {
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 1rem;
+        }
+        
+        /* ナビゲーション */
+        .btn {
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-block;
+            margin: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), #2e7d32);
+            border: none;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(51, 153, 51, 0.3);
+        }
+        
+        .btn-outline-primary {
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            background: transparent;
+        }
+        
+        .btn-outline-primary:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        /* ナビゲーション */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+        
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .nav-menu li {
+            margin: 0 1rem;
+        }
+        
+        .nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        /* レスポンシブ */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .best-practices-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-toggle {
+                display: block;
+            }
+            
+            .nav-menu {
+                position: fixed;
+                top: 60px;
+                left: -100%;
+                width: 100%;
+                height: calc(100vh - 60px);
+                background: rgba(46, 125, 50, 0.95);
+                flex-direction: column;
+                justify-content: start;
+                align-items: center;
+                padding-top: 2rem;
+                transition: left 0.3s ease;
+            }
+            
+            .nav-menu.active {
+                left: 0;
+            }
+            
+            .nav-menu li {
+                margin: 1rem 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header" style="background: linear-gradient(135deg, #2e7d32 0%, #1976d2 100%); padding: 1rem 0; margin-bottom: 0;">
+        <nav class="navbar" style="background: transparent;">
+            <a href="index.html" class="logo" style="color: white;">Node.js Tutorial</a>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link" style="color: white;">ホーム</a></li>
+                <li><a href="nodejs-tutorial.html" class="nav-link" style="color: white;">Node.js基礎</a></li>
+                <li><a href="express-tutorial.html" class="nav-link" style="color: white;">Express.js</a></li>
+                <li><a href="express-generator-tutorial.html" class="nav-link" style="color: white;">Express Generator</a></li>
+                <li><a href="#" class="nav-link active" style="color: white; font-weight: bold;">データベース連携</a></li>
+            </ul>
+            <button class="nav-toggle" aria-label="メニューを開く" style="color: white;">
+                <i class="fas fa-bars"></i>
+            </button>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div style="background: linear-gradient(135deg, #2e7d32 0%, #1976d2 100%); margin: -2rem -2rem 2rem -2rem; padding: 3rem 2rem; text-align: center; color: white;">
+            <h1 style="color: white; border-bottom: none; margin: 0;">データベース連携マスターコース</h1>
+            <p style="font-size: 1.2rem; margin: 1rem 0;">MongoDB、PostgreSQL、Redisを使った本格的なデータベース設計と実装</p>
+            <div style="margin-top: 1.5rem;">
+                <span style="margin: 0 1rem;"><i class="fas fa-clock"></i> 約 4-5時間</span>
+                <span style="margin: 0 1rem;"><i class="fas fa-signal"></i> 上級</span>
+                <span style="margin: 0 1rem;"><i class="fas fa-calendar"></i> 最終更新: 2024年</span>
+            </div>
+        </div>
+
+        <main>
+            <!-- Introduction -->
+            <section id="introduction" class="tutorial-section">
+                <h2>はじめに</h2>
+                <p>現代のWebアプリケーション開発において、データベースは不可欠な要素です。このチュートリアルでは、Node.jsアプリケーションで最も人気のある3つのデータベース技術について学びます。</p>
+                
+                <div class="info-box">
+                    <h4><i class="fas fa-info-circle"></i> このチュートリアルで学べること</h4>
+                    <ul>
+                        <li>MongoDB（NoSQL）とMongooseを使ったドキュメント指向データベースの操作</li>
+                        <li>PostgreSQL（SQL）とSequelizeを使ったリレーショナルデータベースの管理</li>
+                        <li>Redisを使った高速キャッシングシステムの実装</li>
+                        <li>データベース設計の原則とベストプラクティス</li>
+                        <li>本番環境でのパフォーマンス最適化とスケーリング</li>
+                    </ul>
+                </div>
+
+                <h3>データベースの選択基準</h3>
+                <div class="comparison-grid">
+                    <div class="comparison-item">
+                        <h4>MongoDB</h4>
+                        <ul>
+                            <li>スキーマレスで柔軟なデータ構造</li>
+                            <li>水平スケーリングが容易</li>
+                            <li>JSONライクなドキュメント形式</li>
+                            <li>リアルタイムアプリケーションに最適</li>
+                        </ul>
+                    </div>
+                    <div class="comparison-item">
+                        <h4>PostgreSQL</h4>
+                        <ul>
+                            <li>ACID準拠の強力なトランザクション</li>
+                            <li>複雑なクエリと結合に優れる</li>
+                            <li>データ整合性が重要な場合に最適</li>
+                            <li>豊富な拡張機能とデータ型</li>
+                        </ul>
+                    </div>
+                    <div class="comparison-item">
+                        <h4>Redis</h4>
+                        <ul>
+                            <li>インメモリデータストア</li>
+                            <li>超高速な読み書き性能</li>
+                            <li>セッション管理やキャッシュに最適</li>
+                            <li>Pub/Sub機能でリアルタイム通信</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MongoDB and Mongoose -->
+            <section id="mongodb-mongoose" class="tutorial-section">
+                <h2>MongoDB と Mongoose</h2>
+                <p>MongoDBは最も人気のあるNoSQLデータベースで、Mongooseはそのための強力なODM（Object Document Mapper）です。</p>
+
+                <h3>1. セットアップ</h3>
+                <pre><code class="language-bash"># MongoDBのインストール（macOS）
+brew tap mongodb/brew
+brew install mongodb-community
+
+# MongoDBの起動
+brew services start mongodb-community
+
+# Mongooseのインストール
+npm install mongoose</code></pre>
+
+                <h3>2. 接続設定</h3>
+                <p><strong>config/database.js</strong></p>
+                <pre><code class="language-javascript">const mongoose = require('mongoose');
+
+const connectDB = async () => {
+  try {
+    const conn = await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/myapp', {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    
+    console.log(`MongoDB Connected: ${conn.connection.host}`);
+    
+    // 接続イベントのリスナー
+    mongoose.connection.on('error', err => {
+      console.error('MongoDB connection error:', err);
+    });
+    
+    mongoose.connection.on('disconnected', () => {
+      console.log('MongoDB disconnected');
+    });
+    
+    // グレースフルシャットダウン
+    process.on('SIGINT', async () => {
+      await mongoose.connection.close();
+      process.exit(0);
+    });
+  } catch (error) {
+    console.error('Error connecting to MongoDB:', error);
+    process.exit(1);
+  }
+};
+
+module.exports = connectDB;</code></pre>
+
+                <h3>3. スキーマとモデルの定義</h3>
+                <p><strong>models/User.js</strong></p>
+                <pre><code class="language-javascript">const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
+
+const userSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: [true, '名前は必須です'],
+    trim: true,
+    maxlength: [50, '名前は50文字以内で入力してください']
+  },
+  email: {
+    type: String,
+    required: [true, 'メールアドレスは必須です'],
+    unique: true,
+    lowercase: true,
+    validate: {
+      validator: function(v) {
+        return /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(v);
+      },
+      message: '有効なメールアドレスを入力してください'
+    }
+  },
+  password: {
+    type: String,
+    required: [true, 'パスワードは必須です'],
+    minlength: [6, 'パスワードは6文字以上で入力してください'],
+    select: false // デフォルトでパスワードを取得しない
+  },
+  role: {
+    type: String,
+    enum: ['user', 'admin'],
+    default: 'user'
+  },
+  profile: {
+    bio: String,
+    avatar: String,
+    social: {
+      twitter: String,
+      facebook: String,
+      linkedin: String
+    }
+  },
+  posts: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Post'
+  }],
+  createdAt: {
+    type: Date,
+    default: Date.now
+  },
+  lastLogin: Date,
+  isActive: {
+    type: Boolean,
+    default: true
+  }
+}, {
+  timestamps: true,
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true }
+});
+
+// インデックスの設定
+userSchema.index({ email: 1 });
+userSchema.index({ createdAt: -1 });
+userSchema.index({ name: 'text', 'profile.bio': 'text' });
+
+// 仮想プロパティ
+userSchema.virtual('fullName').get(function() {
+  return this.name;
+});
+
+userSchema.virtual('postCount').get(function() {
+  return this.posts.length;
+});
+
+// ミドルウェア - 保存前にパスワードをハッシュ化
+userSchema.pre('save', async function(next) {
+  if (!this.isModified('password')) return next();
+  
+  try {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
+
+// インスタンスメソッド
+userSchema.methods.comparePassword = async function(candidatePassword) {
+  return await bcrypt.compare(candidatePassword, this.password);
+};
+
+userSchema.methods.toJSON = function() {
+  const obj = this.toObject();
+  delete obj.password;
+  delete obj.__v;
+  return obj;
+};
+
+// 静的メソッド
+userSchema.statics.findByEmail = function(email) {
+  return this.findOne({ email: email.toLowerCase() });
+};
+
+userSchema.statics.findActiveUsers = function() {
+  return this.find({ isActive: true });
+};
+
+const User = mongoose.model('User', userSchema);
+
+module.exports = User;</code></pre>
+
+                <p><strong>models/Post.js</strong></p>
+                <pre><code class="language-javascript">const mongoose = require('mongoose');
+
+const postSchema = new mongoose.Schema({
+  title: {
+    type: String,
+    required: [true, 'タイトルは必須です'],
+    trim: true,
+    maxlength: [100, 'タイトルは100文字以内で入力してください']
+  },
+  slug: {
+    type: String,
+    unique: true,
+    lowercase: true
+  },
+  content: {
+    type: String,
+    required: [true, '内容は必須です']
+  },
+  excerpt: {
+    type: String,
+    maxlength: [200, '抜粋は200文字以内で入力してください']
+  },
+  author: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  category: {
+    type: String,
+    required: true,
+    enum: ['技術', 'ライフスタイル', 'ビジネス', 'その他']
+  },
+  tags: [{
+    type: String,
+    lowercase: true
+  }],
+  images: [{
+    url: String,
+    caption: String
+  }],
+  status: {
+    type: String,
+    enum: ['draft', 'published', 'archived'],
+    default: 'draft'
+  },
+  views: {
+    type: Number,
+    default: 0
+  },
+  likes: [{
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now
+    }
+  }],
+  comments: [{
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    },
+    content: String,
+    createdAt: {
+      type: Date,
+      default: Date.now
+    }
+  }],
+  publishedAt: Date,
+  metadata: {
+    readTime: Number,
+    seoTitle: String,
+    seoDescription: String,
+    seoKeywords: [String]
+  }
+}, {
+  timestamps: true
+});
+
+// インデックス
+postSchema.index({ slug: 1 });
+postSchema.index({ author: 1, status: 1 });
+postSchema.index({ tags: 1 });
+postSchema.index({ title: 'text', content: 'text' });
+
+// 保存前にスラッグを生成
+postSchema.pre('save', function(next) {
+  if (this.isModified('title')) {
+    this.slug = this.title
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .trim();
+  }
+  
+  // 抜粋を自動生成
+  if (!this.excerpt && this.content) {
+    this.excerpt = this.content.substring(0, 197) + '...';
+  }
+  
+  // 読了時間を計算（1分あたり200文字）
+  if (this.content) {
+    this.metadata.readTime = Math.ceil(this.content.length / 200);
+  }
+  
+  next();
+});
+
+// 公開時に日付を設定
+postSchema.pre('save', function(next) {
+  if (this.isModified('status') && this.status === 'published' && !this.publishedAt) {
+    this.publishedAt = new Date();
+  }
+  next();
+});
+
+// メソッド
+postSchema.methods.incrementViews = async function() {
+  this.views += 1;
+  return this.save();
+};
+
+postSchema.methods.addComment = async function(userId, content) {
+  this.comments.push({ user: userId, content });
+  return this.save();
+};
+
+postSchema.methods.toggleLike = async function(userId) {
+  const likeIndex = this.likes.findIndex(like => 
+    like.user.toString() === userId.toString()
+  );
+  
+  if (likeIndex > -1) {
+    this.likes.splice(likeIndex, 1);
+  } else {
+    this.likes.push({ user: userId });
+  }
+  
+  return this.save();
+};
+
+// 静的メソッド
+postSchema.statics.findPublished = function() {
+  return this.find({ status: 'published' })
+    .sort('-publishedAt')
+    .populate('author', 'name email');
+};
+
+postSchema.statics.findBySlug = function(slug) {
+  return this.findOne({ slug })
+    .populate('author', 'name email profile.avatar');
+};
+
+postSchema.statics.searchPosts = function(query) {
+  return this.find(
+    { $text: { $search: query } },
+    { score: { $meta: 'textScore' } }
+  ).sort({ score: { $meta: 'textScore' } });
+};
+
+const Post = mongoose.model('Post', postSchema);
+
+module.exports = Post;</code></pre>
+
+                <h3>4. CRUD操作の実装</h3>
+                <p><strong>controllers/userController.js</strong></p>
+                <pre><code class="language-javascript">const User = require('../models/User');
+const catchAsync = require('../utils/catchAsync');
+const AppError = require('../utils/appError');
+
+// ユーザー一覧取得
+exports.getUsers = catchAsync(async (req, res, next) => {
+  // クエリビルダー
+  const query = User.find();
+  
+  // フィルタリング
+  if (req.query.role) {
+    query.where('role').equals(req.query.role);
+  }
+  
+  if (req.query.active) {
+    query.where('isActive').equals(req.query.active === 'true');
+  }
+  
+  // 検索
+  if (req.query.search) {
+    query.where('name').regex(new RegExp(req.query.search, 'i'));
+  }
+  
+  // ソート
+  const sortBy = req.query.sortBy || '-createdAt';
+  query.sort(sortBy);
+  
+  // ページネーション
+  const page = parseInt(req.query.page, 10) || 1;
+  const limit = parseInt(req.query.limit, 10) || 10;
+  const skip = (page - 1) * limit;
+  
+  query.skip(skip).limit(limit);
+  
+  // フィールド選択
+  if (req.query.fields) {
+    const fields = req.query.fields.split(',').join(' ');
+    query.select(fields);
+  }
+  
+  // ポピュレート
+  query.populate('posts', 'title status publishedAt');
+  
+  // 実行
+  const users = await query;
+  
+  // 総数を取得
+  const total = await User.countDocuments();
+  
+  res.json({
+    status: 'success',
+    results: users.length,
+    total,
+    page,
+    pages: Math.ceil(total / limit),
+    data: users
+  });
+});
+
+// 単一ユーザー取得
+exports.getUser = catchAsync(async (req, res, next) => {
+  const user = await User.findById(req.params.id)
+    .populate({
+      path: 'posts',
+      select: 'title slug status publishedAt views',
+      match: { status: 'published' },
+      options: { sort: '-publishedAt', limit: 10 }
+    });
+  
+  if (!user) {
+    return next(new AppError('ユーザーが見つかりません', 404));
+  }
+  
+  res.json({
+    status: 'success',
+    data: user
+  });
+});
+
+// ユーザー作成
+exports.createUser = catchAsync(async (req, res, next) => {
+  const newUser = await User.create({
+    name: req.body.name,
+    email: req.body.email,
+    password: req.body.password,
+    role: req.body.role
+  });
+  
+  res.status(201).json({
+    status: 'success',
+    data: newUser
+  });
+});
+
+// ユーザー更新
+exports.updateUser = catchAsync(async (req, res, next) => {
+  const allowedUpdates = ['name', 'email', 'profile', 'isActive'];
+  const updates = Object.keys(req.body)
+    .filter(key => allowedUpdates.includes(key))
+    .reduce((obj, key) => {
+      obj[key] = req.body[key];
+      return obj;
+    }, {});
+  
+  const user = await User.findByIdAndUpdate(
+    req.params.id,
+    updates,
+    {
+      new: true,
+      runValidators: true
+    }
+  );
+  
+  if (!user) {
+    return next(new AppError('ユーザーが見つかりません', 404));
+  }
+  
+  res.json({
+    status: 'success',
+    data: user
+  });
+});
+
+// ユーザー削除
+exports.deleteUser = catchAsync(async (req, res, next) => {
+  const user = await User.findByIdAndDelete(req.params.id);
+  
+  if (!user) {
+    return next(new AppError('ユーザーが見つかりません', 404));
+  }
+  
+  res.status(204).json({
+    status: 'success',
+    data: null
+  });
+});
+
+// 統計情報
+exports.getUserStats = catchAsync(async (req, res, next) => {
+  const stats = await User.aggregate([
+    {
+      $match: { isActive: true }
+    },
+    {
+      $group: {
+        _id: '$role',
+        count: { $sum: 1 },
+        avgPostCount: { $avg: { $size: '$posts' } }
+      }
+    },
+    {
+      $sort: { count: -1 }
+    }
+  ]);
+  
+  const monthlySignups = await User.aggregate([
+    {
+      $group: {
+        _id: {
+          year: { $year: '$createdAt' },
+          month: { $month: '$createdAt' }
+        },
+        count: { $sum: 1 }
+      }
+    },
+    {
+      $sort: { '_id.year': -1, '_id.month': -1 }
+    },
+    {
+      $limit: 12
+    }
+  ]);
+  
+  res.json({
+    status: 'success',
+    data: {
+      roleStats: stats,
+      monthlySignups
+    }
+  });
+});</code></pre>
+
+                <h3>5. 高度なクエリテクニック</h3>
+                <pre><code class="language-javascript">// 複雑なアグリゲーション
+const getPopularPosts = async () => {
+  const posts = await Post.aggregate([
+    // 公開済みの投稿のみ
+    { $match: { status: 'published' } },
+    
+    // 日付でフィルタ（過去30日）
+    {
+      $match: {
+        publishedAt: {
+          $gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+        }
+      }
+    },
+    
+    // いいね数を計算
+    {
+      $addFields: {
+        likeCount: { $size: '$likes' },
+        commentCount: { $size: '$comments' }
+      }
+    },
+    
+    // 人気度スコアを計算
+    {
+      $addFields: {
+        popularityScore: {
+          $add: [
+            { $multiply: ['$views', 0.1] },
+            { $multiply: ['$likeCount', 2] },
+            { $multiply: ['$commentCount', 3] }
+          ]
+        }
+      }
+    },
+    
+    // ソート
+    { $sort: { popularityScore: -1 } },
+    
+    // 上位10件を取得
+    { $limit: 10 },
+    
+    // 著者情報を結合
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'author',
+        foreignField: '_id',
+        as: 'author'
+      }
+    },
+    
+    // 配列を単一オブジェクトに変換
+    { $unwind: '$author' },
+    
+    // 必要なフィールドのみ選択
+    {
+      $project: {
+        title: 1,
+        slug: 1,
+        excerpt: 1,
+        author: {
+          name: 1,
+          email: 1,
+          'profile.avatar': 1
+        },
+        category: 1,
+        tags: 1,
+        views: 1,
+        likeCount: 1,
+        commentCount: 1,
+        popularityScore: 1,
+        publishedAt: 1
+      }
+    }
+  ]);
+  
+  return posts;
+};
+
+// トランザクションの使用
+const transferPost = async (postId, fromUserId, toUserId) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  
+  try {
+    // 投稿の著者を更新
+    const post = await Post.findByIdAndUpdate(
+      postId,
+      { author: toUserId },
+      { session, new: true }
+    );
+    
+    if (!post) {
+      throw new Error('投稿が見つかりません');
+    }
+    
+    // 元の著者から投稿を削除
+    await User.findByIdAndUpdate(
+      fromUserId,
+      { $pull: { posts: postId } },
+      { session }
+    );
+    
+    // 新しい著者に投稿を追加
+    await User.findByIdAndUpdate(
+      toUserId,
+      { $push: { posts: postId } },
+      { session }
+    );
+    
+    // トランザクションをコミット
+    await session.commitTransaction();
+    session.endSession();
+    
+    return post;
+  } catch (error) {
+    // エラーが発生したらロールバック
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
+  }
+};
+
+// バルク操作
+const bulkUpdatePosts = async (updates) => {
+  const bulkOps = updates.map(update => ({
+    updateOne: {
+      filter: { _id: update.id },
+      update: { $set: update.data },
+      upsert: false
+    }
+  }));
+  
+  const result = await Post.bulkWrite(bulkOps);
+  return result;
+};</code></pre>
+            </section>
+
+            <!-- PostgreSQL and Sequelize -->
+            <section id="postgresql-sequelize" class="tutorial-section">
+                <h2>PostgreSQL と Sequelize</h2>
+                <p>PostgreSQLは最も高機能なオープンソースのリレーショナルデータベースで、SequelizeはNode.js用の強力なORMです。</p>
+
+                <h3>1. セットアップ</h3>
+                <pre><code class="language-bash"># PostgreSQLのインストール（macOS）
+brew install postgresql
+brew services start postgresql
+
+# データベースの作成
+createdb myapp_development
+createdb myapp_test
+createdb myapp_production
+
+# Sequelizeと必要なパッケージのインストール
+npm install sequelize pg pg-hstore
+npm install --save-dev sequelize-cli
+
+# Sequelizeの初期化
+npx sequelize-cli init</code></pre>
+
+                <h3>2. 設定ファイル</h3>
+                <p><strong>config/config.js</strong></p>
+                <pre><code class="language-javascript">require('dotenv').config();
+
+module.exports = {
+  development: {
+    username: process.env.DB_USERNAME || 'postgres',
+    password: process.env.DB_PASSWORD || null,
+    database: process.env.DB_NAME || 'myapp_development',
+    host: process.env.DB_HOST || '127.0.0.1',
+    port: process.env.DB_PORT || 5432,
+    dialect: 'postgres',
+    logging: console.log,
+    pool: {
+      max: 5,
+      min: 0,
+      acquire: 30000,
+      idle: 10000
+    }
+  },
+  test: {
+    username: process.env.DB_USERNAME || 'postgres',
+    password: process.env.DB_PASSWORD || null,
+    database: process.env.DB_NAME_TEST || 'myapp_test',
+    host: process.env.DB_HOST || '127.0.0.1',
+    dialect: 'postgres',
+    logging: false
+  },
+  production: {
+    use_env_variable: 'DATABASE_URL',
+    dialect: 'postgres',
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false
+      }
+    },
+    logging: false,
+    pool: {
+      max: 10,
+      min: 2,
+      acquire: 30000,
+      idle: 10000
+    }
+  }
+};</code></pre>
+
+                <h3>3. モデルの定義</h3>
+                <p><strong>models/index.js</strong></p>
+                <pre><code class="language-javascript">const { Sequelize } = require('sequelize');
+const config = require('../config/config.js')[process.env.NODE_ENV || 'development'];
+
+let sequelize;
+if (config.use_env_variable) {
+  sequelize = new Sequelize(process.env[config.use_env_variable], config);
+} else {
+  sequelize = new Sequelize(config.database, config.username, config.password, config);
+}
+
+// モデルのインポート
+const User = require('./user')(sequelize, Sequelize.DataTypes);
+const Product = require('./product')(sequelize, Sequelize.DataTypes);
+const Order = require('./order')(sequelize, Sequelize.DataTypes);
+const OrderItem = require('./orderItem')(sequelize, Sequelize.DataTypes);
+const Category = require('./category')(sequelize, Sequelize.DataTypes);
+const Review = require('./review')(sequelize, Sequelize.DataTypes);
+
+// アソシエーションの定義
+// User associations
+User.hasMany(Order, { foreignKey: 'userId', as: 'orders' });
+User.hasMany(Review, { foreignKey: 'userId', as: 'reviews' });
+
+// Product associations
+Product.belongsTo(Category, { foreignKey: 'categoryId', as: 'category' });
+Product.hasMany(OrderItem, { foreignKey: 'productId', as: 'orderItems' });
+Product.hasMany(Review, { foreignKey: 'productId', as: 'reviews' });
+
+// Order associations
+Order.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+Order.hasMany(OrderItem, { foreignKey: 'orderId', as: 'items' });
+
+// OrderItem associations
+OrderItem.belongsTo(Order, { foreignKey: 'orderId' });
+OrderItem.belongsTo(Product, { foreignKey: 'productId', as: 'product' });
+
+// Category associations
+Category.hasMany(Product, { foreignKey: 'categoryId', as: 'products' });
+
+// Review associations
+Review.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+Review.belongsTo(Product, { foreignKey: 'productId', as: 'product' });
+
+module.exports = {
+  sequelize,
+  Sequelize,
+  User,
+  Product,
+  Order,
+  OrderItem,
+  Category,
+  Review
+};</code></pre>
+
+                <p><strong>models/user.js</strong></p>
+                <pre><code class="language-javascript">const bcrypt = require('bcryptjs');
+
+module.exports = (sequelize, DataTypes) => {
+  const User = sequelize.define('User', {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true
+    },
+    username: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+      validate: {
+        len: [3, 30],
+        isAlphanumeric: true
+      }
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+      validate: {
+        isEmail: true
+      }
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        len: [6, 100]
+      }
+    },
+    firstName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        len: [1, 50]
+      }
+    },
+    lastName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        len: [1, 50]
+      }
+    },
+    role: {
+      type: DataTypes.ENUM('customer', 'admin', 'vendor'),
+      defaultValue: 'customer'
+    },
+    isActive: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true
+    },
+    emailVerified: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
+    emailVerificationToken: DataTypes.STRING,
+    passwordResetToken: DataTypes.STRING,
+    passwordResetExpires: DataTypes.DATE,
+    lastLogin: DataTypes.DATE,
+    profile: {
+      type: DataTypes.JSONB,
+      defaultValue: {},
+      get() {
+        return this.getDataValue('profile') || {};
+      }
+    },
+    preferences: {
+      type: DataTypes.JSONB,
+      defaultValue: {
+        notifications: {
+          email: true,
+          push: false
+        },
+        theme: 'light'
+      }
+    },
+    address: {
+      type: DataTypes.JSONB,
+      defaultValue: {}
+    }
+  }, {
+    tableName: 'users',
+    timestamps: true,
+    indexes: [
+      {
+        fields: ['email']
+      },
+      {
+        fields: ['username']
+      },
+      {
+        fields: ['createdAt']
+      }
+    ],
+    hooks: {
+      beforeCreate: async (user) => {
+        user.password = await bcrypt.hash(user.password, 10);
+      },
+      beforeUpdate: async (user) => {
+        if (user.changed('password')) {
+          user.password = await bcrypt.hash(user.password, 10);
+        }
+      }
+    }
+  });
+
+  // インスタンスメソッド
+  User.prototype.comparePassword = async function(password) {
+    return bcrypt.compare(password, this.password);
+  };
+
+  User.prototype.getFullName = function() {
+    return `${this.firstName} ${this.lastName}`;
+  };
+
+  User.prototype.toJSON = function() {
+    const values = Object.assign({}, this.get());
+    delete values.password;
+    delete values.emailVerificationToken;
+    delete values.passwordResetToken;
+    delete values.passwordResetExpires;
+    return values;
+  };
+
+  // クラスメソッド
+  User.findByEmail = function(email) {
+    return this.findOne({ where: { email } });
+  };
+
+  User.findActiveUsers = function() {
+    return this.findAll({ 
+      where: { isActive: true },
+      order: [['createdAt', 'DESC']]
+    });
+  };
+
+  return User;
+};</code></pre>
+
+                <p><strong>models/product.js</strong></p>
+                <pre><code class="language-javascript">module.exports = (sequelize, DataTypes) => {
+  const Product = sequelize.define('Product', {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true
+    },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        len: [1, 200]
+      }
+    },
+    slug: {
+      type: DataTypes.STRING,
+      unique: true
+    },
+    description: {
+      type: DataTypes.TEXT,
+      allowNull: false
+    },
+    price: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: false,
+      validate: {
+        min: 0
+      }
+    },
+    compareAtPrice: {
+      type: DataTypes.DECIMAL(10, 2),
+      validate: {
+        min: 0
+      }
+    },
+    cost: {
+      type: DataTypes.DECIMAL(10, 2),
+      validate: {
+        min: 0
+      }
+    },
+    sku: {
+      type: DataTypes.STRING,
+      unique: true
+    },
+    barcode: DataTypes.STRING,
+    trackQuantity: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true
+    },
+    quantity: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+      validate: {
+        min: 0
+      }
+    },
+    weight: {
+      type: DataTypes.DECIMAL(10, 2),
+      validate: {
+        min: 0
+      }
+    },
+    weightUnit: {
+      type: DataTypes.ENUM('kg', 'g', 'lb', 'oz'),
+      defaultValue: 'kg'
+    },
+    status: {
+      type: DataTypes.ENUM('active', 'draft', 'archived'),
+      defaultValue: 'active'
+    },
+    images: {
+      type: DataTypes.JSONB,
+      defaultValue: []
+    },
+    tags: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
+      defaultValue: []
+    },
+    metadata: {
+      type: DataTypes.JSONB,
+      defaultValue: {}
+    },
+    categoryId: {
+      type: DataTypes.UUID,
+      references: {
+        model: 'categories',
+        key: 'id'
+      }
+    }
+  }, {
+    tableName: 'products',
+    timestamps: true,
+    paranoid: true,
+    indexes: [
+      {
+        fields: ['slug']
+      },
+      {
+        fields: ['sku']
+      },
+      {
+        fields: ['status']
+      },
+      {
+        fields: ['categoryId']
+      },
+      {
+        type: 'FULLTEXT',
+        fields: ['name', 'description']
+      }
+    ],
+    hooks: {
+      beforeCreate: (product) => {
+        if (!product.slug) {
+          product.slug = product.name
+            .toLowerCase()
+            .replace(/[^\w\s-]/g, '')
+            .replace(/\s+/g, '-')
+            .replace(/-+/g, '-')
+            .trim();
+        }
+      }
+    }
+  });
+
+  // スコープ
+  Product.addScope('active', {
+    where: { status: 'active' }
+  });
+
+  Product.addScope('inStock', {
+    where: {
+      [sequelize.Sequelize.Op.or]: [
+        { trackQuantity: false },
+        { quantity: { [sequelize.Sequelize.Op.gt]: 0 } }
+      ]
+    }
+  });
+
+  Product.addScope('withCategory', {
+    include: [{
+      model: sequelize.models.Category,
+      as: 'category'
+    }]
+  });
+
+  // インスタンスメソッド
+  Product.prototype.isInStock = function() {
+    return !this.trackQuantity || this.quantity > 0;
+  };
+
+  Product.prototype.updateStock = async function(quantity, operation = 'decrease') {
+    if (!this.trackQuantity) return this;
+    
+    if (operation === 'decrease') {
+      if (this.quantity < quantity) {
+        throw new Error('在庫が不足しています');
+      }
+      this.quantity -= quantity;
+    } else {
+      this.quantity += quantity;
+    }
+    
+    return this.save();
+  };
+
+  return Product;
+};</code></pre>
+
+                <h3>4. マイグレーション</h3>
+                <p><strong>migrations/20240101000001-create-users-table.js</strong></p>
+                <pre><code class="language-javascript">module.exports = {
+  up: async (queryInterface, Sequelize) => {
+    await queryInterface.createTable('users', {
+      id: {
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
+        primaryKey: true,
+        allowNull: false
+      },
+      username: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        unique: true
+      },
+      email: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        unique: true
+      },
+      password: {
+        type: Sequelize.STRING,
+        allowNull: false
+      },
+      firstName: {
+        type: Sequelize.STRING,
+        allowNull: false
+      },
+      lastName: {
+        type: Sequelize.STRING,
+        allowNull: false
+      },
+      role: {
+        type: Sequelize.ENUM('customer', 'admin', 'vendor'),
+        defaultValue: 'customer'
+      },
+      isActive: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: true
+      },
+      emailVerified: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
+      },
+      emailVerificationToken: Sequelize.STRING,
+      passwordResetToken: Sequelize.STRING,
+      passwordResetExpires: Sequelize.DATE,
+      lastLogin: Sequelize.DATE,
+      profile: {
+        type: Sequelize.JSONB,
+        defaultValue: {}
+      },
+      preferences: {
+        type: Sequelize.JSONB,
+        defaultValue: {}
+      },
+      address: {
+        type: Sequelize.JSONB,
+        defaultValue: {}
+      },
+      createdAt: {
+        type: Sequelize.DATE,
+        allowNull: false
+      },
+      updatedAt: {
+        type: Sequelize.DATE,
+        allowNull: false
+      }
+    });
+
+    // インデックスの追加
+    await queryInterface.addIndex('users', ['email']);
+    await queryInterface.addIndex('users', ['username']);
+    await queryInterface.addIndex('users', ['createdAt']);
+  },
+
+  down: async (queryInterface, Sequelize) => {
+    await queryInterface.dropTable('users');
+  }
+};</code></pre>
+
+                <h3>5. 高度なクエリとトランザクション</h3>
+                <p><strong>controllers/productController.js</strong></p>
+                <pre><code class="language-javascript">const { Product, Category, Review, OrderItem, sequelize } = require('../models');
+const { Op } = require('sequelize');
+
+// 商品検索（フィルタリング、ソート、ページネーション）
+exports.searchProducts = async (req, res) => {
+  try {
+    const {
+      q,
+      category,
+      minPrice,
+      maxPrice,
+      tags,
+      inStock,
+      sortBy = 'createdAt',
+      order = 'DESC',
+      page = 1,
+      limit = 20
+    } = req.query;
+
+    // WHERE句の構築
+    const where = {};
+    
+    // テキスト検索
+    if (q) {
+      where[Op.or] = [
+        { name: { [Op.iLike]: `%${q}%` } },
+        { description: { [Op.iLike]: `%${q}%` } }
+      ];
+    }
+    
+    // 価格フィルター
+    if (minPrice || maxPrice) {
+      where.price = {};
+      if (minPrice) where.price[Op.gte] = minPrice;
+      if (maxPrice) where.price[Op.lte] = maxPrice;
+    }
+    
+    // タグフィルター
+    if (tags) {
+      const tagArray = Array.isArray(tags) ? tags : tags.split(',');
+      where.tags = { [Op.contains]: tagArray };
+    }
+    
+    // 在庫フィルター
+    if (inStock === 'true') {
+      where[Op.or] = [
+        { trackQuantity: false },
+        { quantity: { [Op.gt]: 0 } }
+      ];
+    }
+    
+    // ステータスは常にactiveのみ
+    where.status = 'active';
+
+    // カテゴリーフィルター
+    const include = [{
+      model: Category,
+      as: 'category',
+      where: category ? { slug: category } : undefined,
+      required: !!category
+    }];
+
+    // クエリ実行
+    const products = await Product.findAndCountAll({
+      where,
+      include,
+      order: [[sortBy, order]],
+      limit: parseInt(limit),
+      offset: (parseInt(page) - 1) * parseInt(limit),
+      distinct: true,
+      subQuery: false
+    });
+
+    // レスポンス
+    res.json({
+      success: true,
+      data: products.rows,
+      pagination: {
+        total: products.count,
+        page: parseInt(page),
+        pages: Math.ceil(products.count / parseInt(limit)),
+        limit: parseInt(limit)
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+};
+
+// 商品詳細と関連情報の取得
+exports.getProductDetail = async (req, res) => {
+  try {
+    const product = await Product.findOne({
+      where: { slug: req.params.slug },
+      include: [
+        {
+          model: Category,
+          as: 'category',
+          attributes: ['id', 'name', 'slug']
+        },
+        {
+          model: Review,
+          as: 'reviews',
+          attributes: ['id', 'rating', 'comment', 'createdAt'],
+          include: [{
+            model: User,
+            as: 'user',
+            attributes: ['id', 'firstName', 'lastName']
+          }],
+          limit: 10,
+          order: [['createdAt', 'DESC']]
+        }
+      ]
+    });
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        error: '商品が見つかりません'
+      });
+    }
+
+    // 関連商品の取得
+    const relatedProducts = await Product.findAll({
+      where: {
+        categoryId: product.categoryId,
+        id: { [Op.ne]: product.id },
+        status: 'active'
+      },
+      limit: 4,
+      order: sequelize.random()
+    });
+
+    // 売上統計
+    const salesStats = await OrderItem.findOne({
+      where: { productId: product.id },
+      attributes: [
+        [sequelize.fn('COUNT', sequelize.col('id')), 'totalOrders'],
+        [sequelize.fn('SUM', sequelize.col('quantity')), 'totalSold'],
+        [sequelize.fn('AVG', sequelize.col('price')), 'avgPrice']
+      ],
+      raw: true
+    });
+
+    res.json({
+      success: true,
+      data: {
+        product,
+        relatedProducts,
+        salesStats
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+};
+
+// 在庫の一括更新（トランザクション使用）
+exports.bulkUpdateStock = async (req, res) => {
+  const t = await sequelize.transaction();
+  
+  try {
+    const updates = req.body.updates; // [{ productId, quantity, operation }]
+    
+    for (const update of updates) {
+      const product = await Product.findByPk(update.productId, {
+        transaction: t,
+        lock: t.LOCK.UPDATE
+      });
+      
+      if (!product) {
+        throw new Error(`商品ID ${update.productId} が見つかりません`);
+      }
+      
+      if (update.operation === 'set') {
+        product.quantity = update.quantity;
+      } else if (update.operation === 'increase') {
+        product.quantity += update.quantity;
+      } else if (update.operation === 'decrease') {
+        if (product.quantity < update.quantity) {
+          throw new Error(`商品 ${product.name} の在庫が不足しています`);
+        }
+        product.quantity -= update.quantity;
+      }
+      
+      await product.save({ transaction: t });
+    }
+    
+    await t.commit();
+    
+    res.json({
+      success: true,
+      message: '在庫を更新しました'
+    });
+  } catch (error) {
+    await t.rollback();
+    res.status(400).json({
+      success: false,
+      error: error.message
+    });
+  }
+};
+
+// 売上レポート（集計クエリ）
+exports.getSalesReport = async (req, res) => {
+  try {
+    const { startDate, endDate, groupBy = 'day' } = req.query;
+    
+    // 日付フォーマット
+    let dateFormat;
+    switch (groupBy) {
+      case 'day':
+        dateFormat = 'YYYY-MM-DD';
+        break;
+      case 'week':
+        dateFormat = 'IYYY-IW';
+        break;
+      case 'month':
+        dateFormat = 'YYYY-MM';
+        break;
+      default:
+        dateFormat = 'YYYY-MM-DD';
+    }
+    
+    const salesData = await OrderItem.findAll({
+      attributes: [
+        [sequelize.fn('DATE_TRUNC', groupBy, sequelize.col('OrderItem.createdAt')), 'period'],
+        [sequelize.fn('COUNT', sequelize.col('OrderItem.id')), 'orderCount'],
+        [sequelize.fn('SUM', sequelize.col('quantity')), 'totalQuantity'],
+        [sequelize.fn('SUM', sequelize.literal('quantity * price')), 'totalRevenue']
+      ],
+      include: [{
+        model: Product,
+        as: 'product',
+        attributes: []
+      }],
+      where: {
+        createdAt: {
+          [Op.between]: [startDate || '2020-01-01', endDate || new Date()]
+        }
+      },
+      group: ['period'],
+      order: [['period', 'ASC']],
+      raw: true
+    });
+    
+    // カテゴリー別売上
+    const categoryData = await OrderItem.findAll({
+      attributes: [
+        [sequelize.col('product.category.name'), 'categoryName'],
+        [sequelize.fn('SUM', sequelize.col('quantity')), 'totalQuantity'],
+        [sequelize.fn('SUM', sequelize.literal('OrderItem.quantity * OrderItem.price')), 'totalRevenue']
+      ],
+      include: [{
+        model: Product,
+        as: 'product',
+        attributes: [],
+        include: [{
+          model: Category,
+          as: 'category',
+          attributes: []
+        }]
+      }],
+      where: {
+        createdAt: {
+          [Op.between]: [startDate || '2020-01-01', endDate || new Date()]
+        }
+      },
+      group: ['product.category.id', 'product.category.name'],
+      order: [[sequelize.literal('totalRevenue'), 'DESC']],
+      raw: true
+    });
+    
+    res.json({
+      success: true,
+      data: {
+        salesData,
+        categoryData
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+};</code></pre>
+            </section>
+
+            <!-- Redis Caching -->
+            <section id="redis-caching" class="tutorial-section">
+                <h2>Redis でキャッシング</h2>
+                <p>Redisは高速なインメモリデータストアで、キャッシング、セッション管理、リアルタイム機能の実装に最適です。</p>
+
+                <h3>1. セットアップ</h3>
+                <pre><code class="language-bash"># Redisのインストール（macOS）
+brew install redis
+brew services start redis
+
+# Node.jsクライアントのインストール
+npm install redis ioredis</code></pre>
+
+                <h3>2. Redis接続の設定</h3>
+                <p><strong>config/redis.js</strong></p>
+                <pre><code class="language-javascript">const Redis = require('ioredis');
+
+// Redis接続の作成
+const redis = new Redis({
+  host: process.env.REDIS_HOST || 'localhost',
+  port: process.env.REDIS_PORT || 6379,
+  password: process.env.REDIS_PASSWORD,
+  db: process.env.REDIS_DB || 0,
+  retryStrategy: (times) => {
+    const delay = Math.min(times * 50, 2000);
+    return delay;
+  },
+  maxRetriesPerRequest: 3
+});
+
+// 接続イベント
+redis.on('connect', () => {
+  console.log('Redis connected');
+});
+
+redis.on('error', (err) => {
+  console.error('Redis error:', err);
+});
+
+// Pub/Sub用の別接続
+const pubClient = redis.duplicate();
+const subClient = redis.duplicate();
+
+module.exports = {
+  redis,
+  pubClient,
+  subClient
+};</code></pre>
+
+                <h3>3. キャッシングミドルウェア</h3>
+                <p><strong>middleware/cache.js</strong></p>
+                <pre><code class="language-javascript">const { redis } = require('../config/redis');
+
+// キャッシュキーの生成
+const generateCacheKey = (req) => {
+  const { originalUrl, method } = req;
+  const userId = req.user?.id || 'anonymous';
+  return `cache:${method}:${originalUrl}:${userId}`;
+};
+
+// キャッシュミドルウェア
+const cache = (duration = 300) => {
+  return async (req, res, next) => {
+    // POSTリクエストはキャッシュしない
+    if (req.method !== 'GET') {
+      return next();
+    }
+    
+    const key = generateCacheKey(req);
+    
+    try {
+      const cachedData = await redis.get(key);
+      
+      if (cachedData) {
+        const data = JSON.parse(cachedData);
+        console.log('Cache hit:', key);
+        return res.json(data);
+      }
+      
+      // キャッシュがない場合は次へ
+      console.log('Cache miss:', key);
+      
+      // レスポンスをインターセプト
+      const originalJson = res.json;
+      res.json = function(data) {
+        // レスポンスをキャッシュに保存
+        redis.setex(key, duration, JSON.stringify(data))
+          .catch(err => console.error('Cache set error:', err));
+        
+        // 元のjsonメソッドを呼ぶ
+        originalJson.call(this, data);
+      };
+      
+      next();
+    } catch (error) {
+      console.error('Cache middleware error:', error);
+      next();
+    }
+  };
+};
+
+// キャッシュの無効化
+const invalidateCache = (pattern) => {
+  return async (req, res, next) => {
+    try {
+      const keys = await redis.keys(`cache:*${pattern}*`);
+      if (keys.length > 0) {
+        await redis.del(keys);
+        console.log(`Invalidated ${keys.length} cache keys`);
+      }
+      next();
+    } catch (error) {
+      console.error('Cache invalidation error:', error);
+      next();
+    }
+  };
+};
+
+// タグベースのキャッシュ
+class TaggedCache {
+  constructor(redis) {
+    this.redis = redis;
+  }
+  
+  async set(key, value, tags = [], ttl = 300) {
+    const pipeline = this.redis.pipeline();
+    
+    // データを保存
+    pipeline.setex(key, ttl, JSON.stringify(value));
+    
+    // タグとキーの関連付け
+    for (const tag of tags) {
+      pipeline.sadd(`tag:${tag}`, key);
+      pipeline.expire(`tag:${tag}`, ttl);
+    }
+    
+    await pipeline.exec();
+  }
+  
+  async get(key) {
+    const data = await this.redis.get(key);
+    return data ? JSON.parse(data) : null;
+  }
+  
+  async invalidateTag(tag) {
+    const keys = await this.redis.smembers(`tag:${tag}`);
+    
+    if (keys.length > 0) {
+      const pipeline = this.redis.pipeline();
+      
+      // キーを削除
+      for (const key of keys) {
+        pipeline.del(key);
+      }
+      
+      // タグセットを削除
+      pipeline.del(`tag:${tag}`);
+      
+      await pipeline.exec();
+      console.log(`Invalidated ${keys.length} keys for tag: ${tag}`);
+    }
+  }
+}
+
+const taggedCache = new TaggedCache(redis);
+
+module.exports = {
+  cache,
+  invalidateCache,
+  taggedCache
+};</code></pre>
+
+                <h3>4. セッション管理</h3>
+                <p><strong>config/session.js</strong></p>
+                <pre><code class="language-javascript">const session = require('express-session');
+const RedisStore = require('connect-redis')(session);
+const { redis } = require('./redis');
+
+const sessionConfig = {
+  store: new RedisStore({
+    client: redis,
+    prefix: 'sess:',
+  }),
+  secret: process.env.SESSION_SECRET || 'your-secret-key',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production',
+    httpOnly: true,
+    maxAge: 1000 * 60 * 60 * 24 * 7, // 1週間
+    sameSite: 'lax'
+  },
+  name: 'sessionId'
+};
+
+module.exports = sessionConfig;</code></pre>
+
+                <h3>5. レート制限</h3>
+                <p><strong>middleware/rateLimiter.js</strong></p>
+                <pre><code class="language-javascript">const { redis } = require('../config/redis');
+
+// スライディングウィンドウ方式のレート制限
+const rateLimiter = (options = {}) => {
+  const {
+    windowMs = 60000, // 1分
+    max = 100, // 最大リクエスト数
+    keyGenerator = (req) => req.ip,
+    skipSuccessfulRequests = false,
+    skipFailedRequests = false,
+    message = 'リクエストが多すぎます。しばらく待ってから再試行してください。'
+  } = options;
+  
+  return async (req, res, next) => {
+    const key = `rate:${keyGenerator(req)}`;
+    const now = Date.now();
+    const windowStart = now - windowMs;
+    
+    try {
+      const pipeline = redis.pipeline();
+      
+      // 古いエントリを削除
+      pipeline.zremrangebyscore(key, '-inf', windowStart);
+      
+      // 現在のリクエスト数を取得
+      pipeline.zcard(key);
+      
+      // 新しいリクエストを追加
+      pipeline.zadd(key, now, `${now}-${Math.random()}`);
+      
+      // TTLを設定
+      pipeline.expire(key, Math.ceil(windowMs / 1000));
+      
+      const results = await pipeline.exec();
+      const requestCount = results[1][1];
+      
+      // レート制限チェック
+      if (requestCount >= max) {
+        res.setHeader('X-RateLimit-Limit', max);
+        res.setHeader('X-RateLimit-Remaining', 0);
+        res.setHeader('X-RateLimit-Reset', new Date(now + windowMs).toISOString());
+        
+        return res.status(429).json({
+          error: message,
+          retryAfter: Math.ceil(windowMs / 1000)
+        });
+      }
+      
+      // ヘッダーを設定
+      res.setHeader('X-RateLimit-Limit', max);
+      res.setHeader('X-RateLimit-Remaining', max - requestCount - 1);
+      res.setHeader('X-RateLimit-Reset', new Date(now + windowMs).toISOString());
+      
+      // リクエスト完了後の処理
+      res.on('finish', () => {
+        if (
+          (skipSuccessfulRequests && res.statusCode < 400) ||
+          (skipFailedRequests && res.statusCode >= 400)
+        ) {
+          // リクエストをカウントから削除
+          redis.zrem(key, `${now}-${Math.random()}`);
+        }
+      });
+      
+      next();
+    } catch (error) {
+      console.error('Rate limiter error:', error);
+      next(); // エラーが発生してもリクエストを通す
+    }
+  };
+};
+
+// API別のレート制限
+const apiLimiter = rateLimiter({
+  windowMs: 15 * 60 * 1000, // 15分
+  max: 100,
+  keyGenerator: (req) => `api:${req.ip}:${req.user?.id || 'anonymous'}`
+});
+
+// 認証エンドポイントのレート制限
+const authLimiter = rateLimiter({
+  windowMs: 15 * 60 * 1000, // 15分
+  max: 5,
+  keyGenerator: (req) => `auth:${req.ip}`,
+  skipSuccessfulRequests: true
+});
+
+module.exports = {
+  rateLimiter,
+  apiLimiter,
+  authLimiter
+};</code></pre>
+
+                <h3>6. リアルタイム機能（Pub/Sub）</h3>
+                <p><strong>services/realtime.js</strong></p>
+                <pre><code class="language-javascript">const { pubClient, subClient } = require('../config/redis');
+const EventEmitter = require('events');
+
+class RealtimeService extends EventEmitter {
+  constructor() {
+    super();
+    this.channels = new Map();
+    this.setupSubscriber();
+  }
+  
+  setupSubscriber() {
+    subClient.on('message', (channel, message) => {
+      try {
+        const data = JSON.parse(message);
+        this.emit(channel, data);
+        
+        // チャンネル固有のリスナーに通知
+        const listeners = this.channels.get(channel) || [];
+        listeners.forEach(listener => listener(data));
+      } catch (error) {
+        console.error('Message parse error:', error);
+      }
+    });
+  }
+  
+  // チャンネルの購読
+  async subscribe(channel, callback) {
+    if (!this.channels.has(channel)) {
+      this.channels.set(channel, []);
+      await subClient.subscribe(channel);
+    }
+    
+    this.channels.get(channel).push(callback);
+    
+    // アンサブスクライブ関数を返す
+    return () => {
+      const listeners = this.channels.get(channel);
+      const index = listeners.indexOf(callback);
+      if (index > -1) {
+        listeners.splice(index, 1);
+        
+        // リスナーがなくなったらアンサブスクライブ
+        if (listeners.length === 0) {
+          this.channels.delete(channel);
+          subClient.unsubscribe(channel);
+        }
+      }
+    };
+  }
+  
+  // メッセージの発行
+  async publish(channel, data) {
+    await pubClient.publish(channel, JSON.stringify(data));
+  }
+  
+  // ユーザー通知
+  async notifyUser(userId, notification) {
+    await this.publish(`user:${userId}`, {
+      type: 'notification',
+      data: notification,
+      timestamp: new Date()
+    });
+  }
+  
+  // ブロードキャスト
+  async broadcast(event, data) {
+    await this.publish('broadcast', {
+      event,
+      data,
+      timestamp: new Date()
+    });
+  }
+}
+
+const realtimeService = new RealtimeService();
+
+// WebSocketとの統合例
+const setupWebSocket = (io) => {
+  io.on('connection', (socket) => {
+    console.log('Client connected:', socket.id);
+    
+    // ユーザー固有のチャンネルを購読
+    socket.on('authenticate', async (userId) => {
+      socket.userId = userId;
+      
+      // ユーザーチャンネルを購読
+      const unsubscribe = await realtimeService.subscribe(
+        `user:${userId}`,
+        (data) => {
+          socket.emit('message', data);
+        }
+      );
+      
+      // 切断時にアンサブスクライブ
+      socket.on('disconnect', () => {
+        unsubscribe();
+      });
+    });
+    
+    // ルームへの参加
+    socket.on('join-room', async (roomId) => {
+      socket.join(roomId);
+      
+      const unsubscribe = await realtimeService.subscribe(
+        `room:${roomId}`,
+        (data) => {
+          io.to(roomId).emit('room-message', data);
+        }
+      );
+      
+      socket.on('leave-room', () => {
+        socket.leave(roomId);
+        unsubscribe();
+      });
+    });
+  });
+};
+
+module.exports = {
+  realtimeService,
+  setupWebSocket
+};</code></pre>
+
+                <h3>7. キューシステム</h3>
+                <p><strong>services/queue.js</strong></p>
+                <pre><code class="language-javascript">const Bull = require('bull');
+const { redis } = require('../config/redis');
+
+// キューの作成
+const emailQueue = new Bull('email', {
+  redis: {
+    host: redis.options.host,
+    port: redis.options.port,
+    password: redis.options.password
+  }
+});
+
+const imageQueue = new Bull('image-processing', {
+  redis: {
+    host: redis.options.host,
+    port: redis.options.port,
+    password: redis.options.password
+  }
+});
+
+// メール送信ジョブの処理
+emailQueue.process(async (job) => {
+  const { to, subject, template, data } = job.data;
+  
+  console.log(`Sending email to ${to}`);
+  
+  // メール送信ロジック
+  await sendEmail(to, subject, template, data);
+  
+  return { sent: true, timestamp: new Date() };
+});
+
+// 画像処理ジョブ
+imageQueue.process(async (job) => {
+  const { imagePath, sizes } = job.data;
+  
+  console.log(`Processing image: ${imagePath}`);
+  
+  // 画像リサイズロジック
+  const results = await resizeImage(imagePath, sizes);
+  
+  return results;
+});
+
+// ジョブの追加
+const addEmailJob = async (emailData) => {
+  const job = await emailQueue.add(emailData, {
+    attempts: 3,
+    backoff: {
+      type: 'exponential',
+      delay: 2000
+    }
+  });
+  
+  return job.id;
+};
+
+const addImageJob = async (imageData) => {
+  const job = await imageQueue.add(imageData, {
+    priority: imageData.priority || 0,
+    delay: imageData.delay || 0
+  });
+  
+  return job.id;
+};
+
+// ジョブイベントの監視
+emailQueue.on('completed', (job, result) => {
+  console.log(`Email job ${job.id} completed:`, result);
+});
+
+emailQueue.on('failed', (job, err) => {
+  console.error(`Email job ${job.id} failed:`, err);
+});
+
+module.exports = {
+  emailQueue,
+  imageQueue,
+  addEmailJob,
+  addImageJob
+};</code></pre>
+            </section>
+
+            <!-- ORM and Query Optimization -->
+            <section id="orm-optimization" class="tutorial-section">
+                <h2>ORMとクエリ最適化</h2>
+                <p>ORMを効率的に使用し、パフォーマンスを最適化するためのテクニックを学びます。</p>
+
+                <h3>1. N+1問題の解決</h3>
+                <pre><code class="language-javascript">// 悪い例：N+1問題が発生
+const posts = await Post.findAll();
+for (const post of posts) {
+  post.author = await User.findByPk(post.authorId); // N回のクエリ
+}
+
+// 良い例：Eager Loading
+const posts = await Post.findAll({
+  include: [{
+    model: User,
+    as: 'author',
+    attributes: ['id', 'name', 'email'] // 必要なフィールドのみ
+  }]
+});
+
+// さらに最適化：ネストした関連の読み込み
+const posts = await Post.findAll({
+  include: [
+    {
+      model: User,
+      as: 'author',
+      attributes: ['id', 'name'],
+      include: [{
+        model: Profile,
+        as: 'profile',
+        attributes: ['avatar', 'bio']
+      }]
+    },
+    {
+      model: Comment,
+      as: 'comments',
+      limit: 5,
+      order: [['createdAt', 'DESC']],
+      include: [{
+        model: User,
+        as: 'user',
+        attributes: ['id', 'name']
+      }]
+    }
+  ]
+});</code></pre>
+
+                <h3>2. クエリの最適化</h3>
+                <pre><code class="language-javascript">// インデックスの活用
+// Mongooseの場合
+userSchema.index({ email: 1 });
+userSchema.index({ createdAt: -1 });
+userSchema.index({ 'profile.location': '2dsphere' }); // 地理空間インデックス
+
+// Sequelizeの場合
+User.init({
+  // ... fields
+}, {
+  indexes: [
+    {
+      unique: true,
+      fields: ['email']
+    },
+    {
+      fields: ['createdAt']
+    },
+    {
+      type: 'FULLTEXT',
+      fields: ['bio']
+    }
+  ]
+});
+
+// 部分インデックス（条件付きインデックス）
+Product.init({
+  // ... fields
+}, {
+  indexes: [
+    {
+      fields: ['status', 'categoryId'],
+      where: {
+        status: 'active'
+      }
+    }
+  ]
+});
+
+// 複合インデックスの順序を考慮
+// 良い例：より選択的なフィールドを先に
+orderSchema.index({ status: 1, userId: 1, createdAt: -1 });
+
+// プロジェクションで必要なフィールドのみ取得
+const users = await User.find({}, 'name email createdAt');
+
+// Lean()で軽量なオブジェクトを取得（Mongoose）
+const products = await Product
+  .find({ status: 'active' })
+  .select('name price')
+  .lean(); // Mongooseドキュメントではなく、プレーンオブジェクトを返す</code></pre>
+
+                <h3>3. バッチ処理とストリーミング</h3>
+                <pre><code class="language-javascript">// カーソルを使った大量データの処理（MongoDB）
+async function processLargeDataset() {
+  const cursor = User.find({ isActive: true }).cursor();
+  
+  for (let user = await cursor.next(); user != null; user = await cursor.next()) {
+    // 各ユーザーを個別に処理
+    await processUser(user);
+  }
+}
+
+// ストリーミング（PostgreSQL）
+const { QueryTypes } = require('sequelize');
+const stream = await sequelize.query(
+  'SELECT * FROM products WHERE status = :status',
+  {
+    replacements: { status: 'active' },
+    type: QueryTypes.SELECT,
+    raw: true,
+    stream: true
+  }
+);
+
+stream.on('data', (product) => {
+  // 各商品を処理
+  processProduct(product);
+});
+
+// バッチ処理
+async function batchProcess(model, batchSize = 1000) {
+  let offset = 0;
+  let hasMore = true;
+  
+  while (hasMore) {
+    const batch = await model.findAll({
+      limit: batchSize,
+      offset: offset,
+      raw: true
+    });
+    
+    if (batch.length === 0) {
+      hasMore = false;
+    } else {
+      await processBatch(batch);
+      offset += batchSize;
+    }
+  }
+}</code></pre>
+
+                <h3>4. 接続プールの最適化</h3>
+                <pre><code class="language-javascript">// MongoDB接続プールの設定
+mongoose.connect(uri, {
+  maxPoolSize: 10, // 最大接続数
+  minPoolSize: 2,  // 最小接続数
+  serverSelectionTimeoutMS: 5000,
+  socketTimeoutMS: 45000,
+});
+
+// PostgreSQL接続プールの設定
+const sequelize = new Sequelize({
+  // ... other config
+  pool: {
+    max: 20,           // 最大接続数
+    min: 5,            // 最小接続数
+    acquire: 30000,    // 接続取得のタイムアウト
+    idle: 10000,       // アイドル接続のタイムアウト
+    evict: 1000,       // アイドル接続チェックの間隔
+    validate: (client) => {
+      // 接続の有効性をチェック
+      return client.query('SELECT 1').then(() => true).catch(() => false);
+    }
+  }
+});
+
+// 接続プールの監視
+sequelize.connectionManager.pool.on('acquire', () => {
+  console.log('Connection acquired');
+});
+
+sequelize.connectionManager.pool.on('release', () => {
+  console.log('Connection released');
+});</code></pre>
+
+                <h3>5. クエリビルダーパターン</h3>
+                <pre><code class="language-javascript">// 柔軟なクエリビルダー
+class QueryBuilder {
+  constructor(model) {
+    this.model = model;
+    this.query = {};
+    this.options = {
+      limit: 20,
+      offset: 0,
+      order: [['createdAt', 'DESC']]
+    };
+  }
+  
+  where(conditions) {
+    Object.assign(this.query, conditions);
+    return this;
+  }
+  
+  whereIn(field, values) {
+    this.query[field] = { [Op.in]: values };
+    return this;
+  }
+  
+  whereBetween(field, min, max) {
+    this.query[field] = { [Op.between]: [min, max] };
+    return this;
+  }
+  
+  whereText(fields, searchTerm) {
+    this.query[Op.or] = fields.map(field => ({
+      [field]: { [Op.iLike]: `%${searchTerm}%` }
+    }));
+    return this;
+  }
+  
+  include(association) {
+    if (!this.options.include) {
+      this.options.include = [];
+    }
+    this.options.include.push(association);
+    return this;
+  }
+  
+  orderBy(field, direction = 'ASC') {
+    this.options.order = [[field, direction]];
+    return this;
+  }
+  
+  limit(limit) {
+    this.options.limit = limit;
+    return this;
+  }
+  
+  offset(offset) {
+    this.options.offset = offset;
+    return this;
+  }
+  
+  paginate(page, perPage = 20) {
+    this.options.limit = perPage;
+    this.options.offset = (page - 1) * perPage;
+    return this;
+  }
+  
+  async execute() {
+    const results = await this.model.findAndCountAll({
+      where: this.query,
+      ...this.options
+    });
+    
+    return {
+      data: results.rows,
+      total: results.count,
+      page: Math.floor(this.options.offset / this.options.limit) + 1,
+      pages: Math.ceil(results.count / this.options.limit)
+    };
+  }
+}
+
+// 使用例
+const results = await new QueryBuilder(Product)
+  .where({ status: 'active' })
+  .whereBetween('price', 100, 1000)
+  .whereText(['name', 'description'], 'laptop')
+  .include({
+    model: Category,
+    as: 'category'
+  })
+  .orderBy('price', 'DESC')
+  .paginate(1, 20)
+  .execute();</code></pre>
+            </section>
+
+            <!-- Database Design -->
+            <section id="database-design" class="tutorial-section">
+                <h2>データベース設計</h2>
+                <p>効率的で拡張可能なデータベース設計の原則とパターンを学びます。</p>
+
+                <h3>1. 正規化と非正規化</h3>
+                <pre><code class="language-javascript">// 正規化されたスキーマ（リレーショナル）
+// 第3正規形まで正規化
+const User = sequelize.define('User', {
+  id: { type: DataTypes.UUID, primaryKey: true },
+  email: { type: DataTypes.STRING, unique: true },
+  username: { type: DataTypes.STRING, unique: true }
+});
+
+const UserProfile = sequelize.define('UserProfile', {
+  userId: { type: DataTypes.UUID, references: { model: User } },
+  firstName: DataTypes.STRING,
+  lastName: DataTypes.STRING,
+  bio: DataTypes.TEXT,
+  avatar: DataTypes.STRING
+});
+
+const Address = sequelize.define('Address', {
+  id: { type: DataTypes.UUID, primaryKey: true },
+  userId: { type: DataTypes.UUID, references: { model: User } },
+  type: DataTypes.ENUM('home', 'work', 'other'),
+  street: DataTypes.STRING,
+  city: DataTypes.STRING,
+  state: DataTypes.STRING,
+  country: DataTypes.STRING,
+  zipCode: DataTypes.STRING
+});
+
+// 非正規化されたスキーマ（NoSQL）
+// パフォーマンスを優先して一部のデータを埋め込み
+const userSchema = new Schema({
+  email: String,
+  username: String,
+  profile: {
+    firstName: String,
+    lastName: String,
+    bio: String,
+    avatar: String
+  },
+  addresses: [{
+    type: { type: String, enum: ['home', 'work', 'other'] },
+    street: String,
+    city: String,
+    state: String,
+    country: String,
+    zipCode: String
+  }],
+  // 頻繁にアクセスされる集計データを保存
+  stats: {
+    postCount: { type: Number, default: 0 },
+    followerCount: { type: Number, default: 0 },
+    followingCount: { type: Number, default: 0 }
+  }
+});</code></pre>
+
+                <h3>2. スキーマ設計パターン</h3>
+                <pre><code class="language-javascript">// 1. ポリモーフィック関連
+const Comment = sequelize.define('Comment', {
+  id: { type: DataTypes.UUID, primaryKey: true },
+  content: DataTypes.TEXT,
+  commentableId: DataTypes.UUID,
+  commentableType: DataTypes.STRING, // 'Post', 'Product', 'User'
+  userId: DataTypes.UUID
+});
+
+// 使用例
+Comment.belongsTo(Post, {
+  foreignKey: 'commentableId',
+  constraints: false,
+  as: 'post'
+});
+
+Comment.belongsTo(Product, {
+  foreignKey: 'commentableId',
+  constraints: false,
+  as: 'product'
+});
+
+// 2. 階層データ（ツリー構造）
+const Category = sequelize.define('Category', {
+  id: { type: DataTypes.UUID, primaryKey: true },
+  name: DataTypes.STRING,
+  parentId: {
+    type: DataTypes.UUID,
+    references: { model: 'categories', key: 'id' }
+  },
+  path: DataTypes.STRING, // '/electronics/computers/laptops'
+  depth: DataTypes.INTEGER
+});
+
+// Materialized Path Pattern
+Category.beforeCreate((category) => {
+  if (category.parentId) {
+    const parent = await Category.findByPk(category.parentId);
+    category.path = `${parent.path}/${category.name}`;
+    category.depth = parent.depth + 1;
+  } else {
+    category.path = `/${category.name}`;
+    category.depth = 0;
+  }
+});
+
+// 3. タグシステム（多対多）
+const Tag = sequelize.define('Tag', {
+  id: { type: DataTypes.UUID, primaryKey: true },
+  name: { type: DataTypes.STRING, unique: true },
+  slug: { type: DataTypes.STRING, unique: true }
+});
+
+const PostTag = sequelize.define('PostTag', {
+  postId: DataTypes.UUID,
+  tagId: DataTypes.UUID,
+  order: DataTypes.INTEGER
+});
+
+Post.belongsToMany(Tag, { through: PostTag });
+Tag.belongsToMany(Post, { through: PostTag });
+
+// 4. イベントソーシング
+const Event = sequelize.define('Event', {
+  id: { type: DataTypes.UUID, primaryKey: true },
+  aggregateId: DataTypes.UUID,
+  aggregateType: DataTypes.STRING,
+  eventType: DataTypes.STRING,
+  eventData: DataTypes.JSONB,
+  userId: DataTypes.UUID,
+  version: DataTypes.INTEGER,
+  timestamp: DataTypes.DATE
+}, {
+  timestamps: false,
+  indexes: [
+    { fields: ['aggregateId', 'version'] },
+    { fields: ['eventType'] },
+    { fields: ['timestamp'] }
+  ]
+});</code></pre>
+
+                <h3>3. 時系列データの設計</h3>
+                <pre><code class="language-javascript">// 時系列データ用のスキーマ
+const Metric = sequelize.define('Metric', {
+  id: { type: DataTypes.BIGINT, autoIncrement: true, primaryKey: true },
+  deviceId: DataTypes.STRING,
+  metricType: DataTypes.STRING,
+  value: DataTypes.FLOAT,
+  timestamp: DataTypes.DATE,
+  metadata: DataTypes.JSONB
+}, {
+  tableName: 'metrics',
+  timestamps: false,
+  indexes: [
+    {
+      fields: ['deviceId', 'timestamp']
+    },
+    {
+      fields: ['metricType', 'timestamp']
+    }
+  ]
+});
+
+// パーティショニング（PostgreSQL）
+await sequelize.query(`
+  CREATE TABLE metrics_2024_01 PARTITION OF metrics
+  FOR VALUES FROM ('2024-01-01') TO ('2024-02-01');
+`);
+
+// 集計用のマテリアライズドビュー
+await sequelize.query(`
+  CREATE MATERIALIZED VIEW hourly_metrics AS
+  SELECT 
+    deviceId,
+    metricType,
+    DATE_TRUNC('hour', timestamp) as hour,
+    AVG(value) as avg_value,
+    MIN(value) as min_value,
+    MAX(value) as max_value,
+    COUNT(*) as count
+  FROM metrics
+  GROUP BY deviceId, metricType, DATE_TRUNC('hour', timestamp);
+  
+  CREATE INDEX ON hourly_metrics (deviceId, hour);
+`);</code></pre>
+
+                <h3>4. マルチテナンシー</h3>
+                <pre><code class="language-javascript">// スキーマレベルの分離
+class TenantConnection {
+  constructor() {
+    this.connections = new Map();
+  }
+  
+  async getConnection(tenantId) {
+    if (!this.connections.has(tenantId)) {
+      const config = {
+        ...baseConfig,
+        database: `tenant_${tenantId}`
+      };
+      
+      const connection = new Sequelize(config);
+      await connection.authenticate();
+      
+      this.connections.set(tenantId, connection);
+    }
+    
+    return this.connections.get(tenantId);
+  }
+}
+
+// 行レベルの分離
+const BaseModel = sequelize.define('BaseModel', {
+  tenantId: {
+    type: DataTypes.UUID,
+    allowNull: false
+  }
+}, {
+  hooks: {
+    beforeFind: (options) => {
+      // 自動的にtenantIdフィルターを追加
+      if (options.where && !options.where.tenantId) {
+        options.where.tenantId = getCurrentTenantId();
+      }
+    }
+  }
+});
+
+// スコープを使った実装
+Product.addScope('tenant', (tenantId) => ({
+  where: { tenantId }
+}));
+
+// 使用
+const products = await Product.scope({ method: ['tenant', tenantId] }).findAll();</code></pre>
+            </section>
+
+            <!-- Migrations -->
+            <section id="migrations" class="tutorial-section">
+                <h2>マイグレーション</h2>
+                <p>データベースのスキーマ変更を安全に管理する方法を学びます。</p>
+
+                <h3>1. マイグレーションの基本</h3>
+                <pre><code class="language-bash"># Sequelizeマイグレーションの作成
+npx sequelize-cli migration:generate --name add-user-table
+
+# マイグレーションの実行
+npx sequelize-cli db:migrate
+
+# マイグレーションのロールバック
+npx sequelize-cli db:migrate:undo
+
+# 特定のマイグレーションまでロールバック
+npx sequelize-cli db:migrate:undo:all --to 20240101000000-create-user.js</code></pre>
+
+                <h3>2. 安全なマイグレーション戦略</h3>
+                <pre><code class="language-javascript">// カラムの追加（安全）
+module.exports = {
+  up: async (queryInterface, Sequelize) => {
+    await queryInterface.addColumn('users', 'phoneNumber', {
+      type: Sequelize.STRING,
+      allowNull: true, // 最初はNULL許可
+      defaultValue: null
+    });
+  },
+  
+  down: async (queryInterface, Sequelize) => {
+    await queryInterface.removeColumn('users', 'phoneNumber');
+  }
+};
+
+// カラムの削除（段階的に実行）
+// Step 1: アプリケーションコードから使用を削除
+// Step 2: カラムをNULL許可に変更
+module.exports = {
+  up: async (queryInterface, Sequelize) => {
+    await queryInterface.changeColumn('users', 'oldColumn', {
+      type: Sequelize.STRING,
+      allowNull: true
+    });
+  }
+};
+
+// Step 3: 実際にカラムを削除
+module.exports = {
+  up: async (queryInterface, Sequelize) => {
+    await queryInterface.removeColumn('users', 'oldColumn');
+  }
+};
+
+// インデックスの追加（CONCURRENTLYを使用）
+module.exports = {
+  up: async (queryInterface, Sequelize) => {
+    await queryInterface.sequelize.query(
+      'CREATE INDEX CONCURRENTLY idx_users_email ON users(email);'
+    );
+  },
+  
+  down: async (queryInterface, Sequelize) => {
+    await queryInterface.sequelize.query(
+      'DROP INDEX CONCURRENTLY idx_users_email;'
+    );
+  }
+};</code></pre>
+
+                <h3>3. データマイグレーション</h3>
+                <pre><code class="language-javascript">// データの変換を伴うマイグレーション
+module.exports = {
+  up: async (queryInterface, Sequelize) => {
+    // 新しいカラムを追加
+    await queryInterface.addColumn('users', 'fullName', {
+      type: Sequelize.STRING
+    });
+    
+    // バッチでデータを更新
+    const batchSize = 1000;
+    let offset = 0;
+    
+    while (true) {
+      const users = await queryInterface.sequelize.query(
+        `SELECT id, "firstName", "lastName" FROM users 
+         LIMIT :limit OFFSET :offset`,
+        {
+          replacements: { limit: batchSize, offset },
+          type: Sequelize.QueryTypes.SELECT
+        }
+      );
+      
+      if (users.length === 0) break;
+      
+      // バルクアップデート
+      const updates = users.map(user => ({
+        id: user.id,
+        fullName: `${user.firstName} ${user.lastName}`
+      }));
+      
+      await queryInterface.bulkUpdate('users', updates);
+      
+      offset += batchSize;
+      console.log(`Updated ${offset} users...`);
+    }
+  },
+  
+  down: async (queryInterface, Sequelize) => {
+    await queryInterface.removeColumn('users', 'fullName');
+  }
+};</code></pre>
+
+                <h3>4. MongoDBマイグレーション</h3>
+                <pre><code class="language-javascript">// migrate-mongo の使用
+const migration = {
+  async up(db, client) {
+    // コレクションの作成
+    await db.createCollection('products');
+    
+    // インデックスの作成
+    await db.collection('products').createIndex({ sku: 1 }, { unique: true });
+    await db.collection('products').createIndex({ name: 'text', description: 'text' });
+    
+    // 既存データの更新
+    await db.collection('users').updateMany(
+      { role: { $exists: false } },
+      { $set: { role: 'customer' } }
+    );
+    
+    // フィールドのリネーム
+    await db.collection('orders').updateMany(
+      {},
+      { $rename: { 'total': 'totalAmount' } }
+    );
+  },
+  
+  async down(db, client) {
+    await db.collection('products').drop();
+    await db.collection('orders').updateMany(
+      {},
+      { $rename: { 'totalAmount': 'total' } }
+    );
+  }
+};
+
+module.exports = migration;</code></pre>
+            </section>
+
+            <!-- Backup and Replication -->
+            <section id="backup-replication" class="tutorial-section">
+                <h2>バックアップとレプリケーション</h2>
+                <p>データの安全性を確保するためのバックアップ戦略とレプリケーションの設定方法を学びます。</p>
+
+                <h3>1. PostgreSQLバックアップ</h3>
+                <pre><code class="language-bash"># 論理バックアップ（pg_dump）
+pg_dump -h localhost -U postgres -d myapp > backup.sql
+
+# カスタムフォーマットでバックアップ（圧縮）
+pg_dump -h localhost -U postgres -d myapp -Fc > backup.dump
+
+# 特定のテーブルのみバックアップ
+pg_dump -h localhost -U postgres -d myapp -t users -t orders > tables_backup.sql
+
+# バックアップのリストア
+psql -h localhost -U postgres -d myapp_restore < backup.sql
+
+# カスタムフォーマットのリストア
+pg_restore -h localhost -U postgres -d myapp_restore backup.dump</code></pre>
+
+                <h3>2. MongoDBバックアップ</h3>
+                <pre><code class="language-bash"># mongodumpを使用したバックアップ
+mongodump --host localhost --port 27017 --db myapp --out /backup/mongo/
+
+# 特定のコレクションのバックアップ
+mongodump --host localhost --port 27017 --db myapp --collection users
+
+# 圧縮バックアップ
+mongodump --archive=myapp.archive --gzip --db myapp
+
+# リストア
+mongorestore --host localhost --port 27017 /backup/mongo/myapp/
+
+# アーカイブからのリストア
+mongorestore --archive=myapp.archive --gzip</code></pre>
+
+                <h3>3. 自動バックアップスクリプト</h3>
+                <p><strong>scripts/backup.js</strong></p>
+                <pre><code class="language-javascript">const { spawn } = require('child_process');
+const fs = require('fs').promises;
+const path = require('path');
+const AWS = require('aws-sdk');
+
+const s3 = new AWS.S3();
+
+class BackupManager {
+  constructor(config) {
+    this.config = config;
+    this.backupDir = config.backupDir || '/tmp/backups';
+  }
+  
+  async backupPostgres() {
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const filename = `postgres-backup-${timestamp}.dump`;
+    const filepath = path.join(this.backupDir, filename);
+    
+    // バックアップディレクトリの作成
+    await fs.mkdir(this.backupDir, { recursive: true });
+    
+    // pg_dumpの実行
+    return new Promise((resolve, reject) => {
+      const pgDump = spawn('pg_dump', [
+        '-h', this.config.postgres.host,
+        '-U', this.config.postgres.user,
+        '-d', this.config.postgres.database,
+        '-Fc',
+        '-f', filepath
+      ], {
+        env: {
+          ...process.env,
+          PGPASSWORD: this.config.postgres.password
+        }
+      });
+      
+      pgDump.on('exit', (code) => {
+        if (code === 0) {
+          resolve(filepath);
+        } else {
+          reject(new Error(`pg_dump exited with code ${code}`));
+        }
+      });
+    });
+  }
+  
+  async backupMongoDB() {
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const filename = `mongodb-backup-${timestamp}.archive`;
+    const filepath = path.join(this.backupDir, filename);
+    
+    return new Promise((resolve, reject) => {
+      const mongoDump = spawn('mongodump', [
+        '--uri', this.config.mongodb.uri,
+        '--archive=' + filepath,
+        '--gzip'
+      ]);
+      
+      mongoDump.on('exit', (code) => {
+        if (code === 0) {
+          resolve(filepath);
+        } else {
+          reject(new Error(`mongodump exited with code ${code}`));
+        }
+      });
+    });
+  }
+  
+  async uploadToS3(filepath) {
+    const fileStream = await fs.readFile(filepath);
+    const filename = path.basename(filepath);
+    
+    const params = {
+      Bucket: this.config.s3.bucket,
+      Key: `backups/${filename}`,
+      Body: fileStream,
+      ServerSideEncryption: 'AES256'
+    };
+    
+    const result = await s3.upload(params).promise();
+    console.log(`Uploaded to S3: ${result.Location}`);
+    
+    // ローカルファイルを削除
+    await fs.unlink(filepath);
+    
+    return result.Location;
+  }
+  
+  async runBackup() {
+    try {
+      console.log('Starting backup process...');
+      
+      // PostgreSQLバックアップ
+      if (this.config.postgres) {
+        const pgFile = await this.backupPostgres();
+        await this.uploadToS3(pgFile);
+        console.log('PostgreSQL backup completed');
+      }
+      
+      // MongoDBバックアップ
+      if (this.config.mongodb) {
+        const mongoFile = await this.backupMongoDB();
+        await this.uploadToS3(mongoFile);
+        console.log('MongoDB backup completed');
+      }
+      
+      // 古いバックアップの削除
+      await this.cleanupOldBackups();
+      
+      console.log('Backup process completed successfully');
+    } catch (error) {
+      console.error('Backup failed:', error);
+      // 通知を送信
+      await this.sendNotification('Backup failed', error.message);
+    }
+  }
+  
+  async cleanupOldBackups() {
+    const retentionDays = this.config.retentionDays || 30;
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - retentionDays);
+    
+    const params = {
+      Bucket: this.config.s3.bucket,
+      Prefix: 'backups/'
+    };
+    
+    const objects = await s3.listObjectsV2(params).promise();
+    
+    const toDelete = objects.Contents
+      .filter(obj => new Date(obj.LastModified) < cutoffDate)
+      .map(obj => ({ Key: obj.Key }));
+    
+    if (toDelete.length > 0) {
+      await s3.deleteObjects({
+        Bucket: this.config.s3.bucket,
+        Delete: { Objects: toDelete }
+      }).promise();
+      
+      console.log(`Deleted ${toDelete.length} old backups`);
+    }
+  }
+}
+
+// Cronジョブとして実行
+const cron = require('node-cron');
+const backupManager = new BackupManager(require('./backup-config'));
+
+// 毎日午前2時に実行
+cron.schedule('0 2 * * *', async () => {
+  await backupManager.runBackup();
+});</code></pre>
+
+                <h3>4. レプリケーション設定</h3>
+                <p><strong>MongoDB レプリカセット</strong></p>
+                <pre><code class="language-javascript">// レプリカセット接続
+mongoose.connect('mongodb://localhost:27017,localhost:27018,localhost:27019/myapp', {
+  replicaSet: 'rs0',
+  readPreference: 'secondaryPreferred', // 読み取り負荷を分散
+  w: 'majority', // 書き込み確認
+  j: true, // ジャーナル書き込み
+  wtimeout: 5000
+});
+
+// 読み取り設定の制御
+const User = mongoose.model('User', userSchema);
+
+// プライマリから読み取り（最新データが必要な場合）
+const user = await User.findById(userId).read('primary');
+
+// セカンダリから読み取り（負荷分散）
+const users = await User.find({}).read('secondary');
+
+// 最寄りのノードから読み取り
+const products = await Product.find({}).read('nearest');</code></pre>
+
+                <p><strong>PostgreSQL ストリーミングレプリケーション</strong></p>
+                <pre><code class="language-bash"># プライマリサーバーの設定（postgresql.conf）
+wal_level = replica
+max_wal_senders = 3
+wal_keep_segments = 64
+archive_mode = on
+archive_command = 'cp %p /var/lib/postgresql/archive/%f'
+
+# スタンバイサーバーの設定
+# 1. ベースバックアップの取得
+pg_basebackup -h primary_host -D /var/lib/postgresql/data -U replicator -P -W
+
+# 2. recovery.conf の作成
+standby_mode = 'on'
+primary_conninfo = 'host=primary_host port=5432 user=replicator'
+trigger_file = '/tmp/postgresql.trigger'</code></pre>
+
+                <h3>5. 災害復旧計画</h3>
+                <pre><code class="language-javascript">// 復旧手順の自動化
+class DisasterRecovery {
+  async performHealthCheck() {
+    const checks = {
+      postgres: await this.checkPostgres(),
+      mongodb: await this.checkMongoDB(),
+      redis: await this.checkRedis()
+    };
+    
+    return checks;
+  }
+  
+  async checkPostgres() {
+    try {
+      await sequelize.authenticate();
+      const [result] = await sequelize.query('SELECT 1');
+      return { status: 'healthy', latency: result.time };
+    } catch (error) {
+      return { status: 'unhealthy', error: error.message };
+    }
+  }
+  
+  async initiateFailover() {
+    console.log('Initiating failover process...');
+    
+    // 1. プライマリの停止を確認
+    const primaryHealth = await this.checkPrimary();
+    if (primaryHealth.status === 'healthy') {
+      throw new Error('Primary is still healthy, aborting failover');
+    }
+    
+    // 2. スタンバイをプライマリに昇格
+    await this.promoteStandby();
+    
+    // 3. アプリケーションの接続先を更新
+    await this.updateConnectionStrings();
+    
+    // 4. 通知を送信
+    await this.notifyTeam('Failover completed', {
+      oldPrimary: this.config.primary,
+      newPrimary: this.config.standby
+    });
+  }
+  
+  async performBackupRestore(backupId) {
+    // 1. バックアップのダウンロード
+    const backupPath = await this.downloadBackup(backupId);
+    
+    // 2. データベースの復元
+    await this.restoreDatabase(backupPath);
+    
+    // 3. 整合性チェック
+    await this.verifyDataIntegrity();
+    
+    // 4. アプリケーションの再起動
+    await this.restartApplication();
+  }
+}</code></pre>
+            </section>
+
+            <!-- Performance Tuning -->
+            <section id="performance-tuning" class="tutorial-section">
+                <h2>パフォーマンスチューニング</h2>
+                <p>データベースのパフォーマンスを最大化するための実践的なテクニックを学びます。</p>
+
+                <h3>1. クエリの分析と最適化</h3>
+                <pre><code class="language-javascript">// PostgreSQL EXPLAIN分析
+const analyzeQuery = async (query) => {
+  const result = await sequelize.query(
+    `EXPLAIN (ANALYZE, BUFFERS) ${query}`,
+    { type: sequelize.QueryTypes.SELECT }
+  );
+  
+  console.log('Query Plan:', result);
+};
+
+// スロークエリログの有効化
+sequelize.options.logging = (sql, timing) => {
+  if (timing > 1000) { // 1秒以上かかるクエリ
+    console.warn('Slow query detected:', {
+      sql,
+      duration: timing,
+      timestamp: new Date()
+    });
+    
+    // スロークエリをRedisに記録
+    redis.zadd('slow_queries', Date.now(), JSON.stringify({
+      sql,
+      duration: timing,
+      timestamp: new Date()
+    }));
+  }
+};
+
+// MongoDB プロファイリング
+db.setProfilingLevel(1, { slowms: 100 }); // 100ms以上のクエリを記録
+
+// プロファイル結果の分析
+const slowQueries = await db.collection('system.profile')
+  .find({ millis: { $gt: 100 } })
+  .sort({ ts: -1 })
+  .limit(10)
+  .toArray();</code></pre>
+
+                <h3>2. インデックスの最適化</h3>
+                <pre><code class="language-javascript">// インデックス使用状況の分析
+async function analyzeIndexUsage() {
+  // PostgreSQL
+  const pgIndexStats = await sequelize.query(`
+    SELECT 
+      schemaname,
+      tablename,
+      indexname,
+      idx_scan,
+      idx_tup_read,
+      idx_tup_fetch,
+      pg_size_pretty(pg_relation_size(indexrelid)) as index_size
+    FROM pg_stat_user_indexes
+    WHERE idx_scan = 0
+    ORDER BY pg_relation_size(indexrelid) DESC;
+  `, { type: sequelize.QueryTypes.SELECT });
+  
+  console.log('Unused indexes:', pgIndexStats);
+  
+  // MongoDB
+  const collections = await db.listCollections().toArray();
+  
+  for (const collection of collections) {
+    const stats = await db.collection(collection.name).aggregate([
+      { $indexStats: {} }
+    ]).toArray();
+    
+    const unusedIndexes = stats.filter(idx => 
+      idx.accesses.ops === 0 && idx.name !== '_id_'
+    );
+    
+    if (unusedIndexes.length > 0) {
+      console.log(`Unused indexes in ${collection.name}:`, unusedIndexes);
+    }
+  }
+}
+
+// 複合インデックスの最適化
+// カーディナリティの高い順に並べる
+userSchema.index({ status: 1, createdAt: -1, userId: 1 }); // 悪い例
+userSchema.index({ userId: 1, createdAt: -1, status: 1 }); // 良い例
+
+// 部分インデックス（条件付きインデックス）
+await sequelize.query(`
+  CREATE INDEX idx_active_products 
+  ON products(name, price) 
+  WHERE status = 'active';
+`);</code></pre>
+
+                <h3>3. 接続プールとリソース管理</h3>
+                <pre><code class="language-javascript">// 接続プールの監視と調整
+class ConnectionPoolMonitor {
+  constructor(sequelize, redis) {
+    this.sequelize = sequelize;
+    this.redis = redis;
+    this.metrics = {
+      acquired: 0,
+      released: 0,
+      pending: 0,
+      failed: 0
+    };
+  }
+  
+  start() {
+    const pool = this.sequelize.connectionManager.pool;
+    
+    pool.on('acquire', () => {
+      this.metrics.acquired++;
+      this.metrics.pending = pool.pending;
+      this.logMetrics();
+    });
+    
+    pool.on('release', () => {
+      this.metrics.released++;
+      this.logMetrics();
+    });
+    
+    pool.on('error', () => {
+      this.metrics.failed++;
+      this.logMetrics();
+    });
+    
+    // 定期的にメトリクスを記録
+    setInterval(() => {
+      this.saveMetrics();
+    }, 60000); // 1分ごと
+  }
+  
+  logMetrics() {
+    const pool = this.sequelize.connectionManager.pool;
+    console.log('Connection Pool Stats:', {
+      size: pool.size,
+      available: pool.available,
+      using: pool.using,
+      pending: pool.pending,
+      ...this.metrics
+    });
+  }
+  
+  async saveMetrics() {
+    const timestamp = Date.now();
+    const pool = this.sequelize.connectionManager.pool;
+    
+    await this.redis.zadd('pool_metrics', timestamp, JSON.stringify({
+      timestamp,
+      size: pool.size,
+      available: pool.available,
+      using: pool.using,
+      pending: pool.pending,
+      ...this.metrics
+    }));
+  }
+  
+  async getPoolRecommendations() {
+    const recentMetrics = await this.redis.zrange(
+      'pool_metrics', 
+      -100, 
+      -1
+    );
+    
+    const parsed = recentMetrics.map(m => JSON.parse(m));
+    const avgPending = parsed.reduce((sum, m) => sum + m.pending, 0) / parsed.length;
+    const maxUsing = Math.max(...parsed.map(m => m.using));
+    
+    const recommendations = [];
+    
+    if (avgPending > 5) {
+      recommendations.push('接続プールサイズを増やすことを検討してください');
+    }
+    
+    if (maxUsing < pool.max * 0.5) {
+      recommendations.push('接続プールサイズを減らすことができます');
+    }
+    
+    return recommendations;
+  }
+}</code></pre>
+
+                <h3>4. キャッシュ戦略の最適化</h3>
+                <pre><code class="language-javascript">// 多層キャッシュ戦略
+class MultiLayerCache {
+  constructor(redis) {
+    this.redis = redis;
+    this.localCache = new Map();
+    this.stats = {
+      localHits: 0,
+      redisHits: 0,
+      misses: 0
+    };
+  }
+  
+  async get(key) {
+    // L1: ローカルメモリキャッシュ
+    if (this.localCache.has(key)) {
+      this.stats.localHits++;
+      return this.localCache.get(key).value;
+    }
+    
+    // L2: Redisキャッシュ
+    const redisValue = await this.redis.get(key);
+    if (redisValue) {
+      this.stats.redisHits++;
+      const parsed = JSON.parse(redisValue);
+      
+      // ローカルキャッシュに保存
+      this.setLocal(key, parsed, 60); // 1分間
+      
+      return parsed;
+    }
+    
+    this.stats.misses++;
+    return null;
+  }
+  
+  async set(key, value, ttl = 300) {
+    // 両方のキャッシュに保存
+    await this.redis.setex(key, ttl, JSON.stringify(value));
+    this.setLocal(key, value, Math.min(ttl, 300)); // 最大5分
+  }
+  
+  setLocal(key, value, ttl) {
+    this.localCache.set(key, {
+      value,
+      expires: Date.now() + (ttl * 1000)
+    });
+    
+    // メモリ制限（1000エントリ）
+    if (this.localCache.size > 1000) {
+      const firstKey = this.localCache.keys().next().value;
+      this.localCache.delete(firstKey);
+    }
+  }
+  
+  // 期限切れエントリの削除
+  cleanup() {
+    const now = Date.now();
+    for (const [key, entry] of this.localCache.entries()) {
+      if (entry.expires < now) {
+        this.localCache.delete(key);
+      }
+    }
+  }
+  
+  getStats() {
+    const total = this.stats.localHits + this.stats.redisHits + this.stats.misses;
+    return {
+      ...this.stats,
+      hitRate: total > 0 ? (this.stats.localHits + this.stats.redisHits) / total : 0,
+      localHitRate: total > 0 ? this.stats.localHits / total : 0
+    };
+  }
+}
+
+// ウォームアップ戦略
+class CacheWarmer {
+  constructor(cache, models) {
+    this.cache = cache;
+    this.models = models;
+  }
+  
+  async warmupPopularData() {
+    console.log('Starting cache warmup...');
+    
+    // 人気商品をキャッシュ
+    const popularProducts = await this.models.Product.findAll({
+      where: { status: 'active' },
+      order: [['views', 'DESC']],
+      limit: 100
+    });
+    
+    for (const product of popularProducts) {
+      await this.cache.set(
+        `product:${product.id}`,
+        product.toJSON(),
+        3600 // 1時間
+      );
+    }
+    
+    // カテゴリーをキャッシュ
+    const categories = await this.models.Category.findAll({
+      include: [{
+        model: this.models.Product,
+        as: 'products',
+        where: { status: 'active' },
+        required: false,
+        attributes: ['id']
+      }]
+    });
+    
+    for (const category of categories) {
+      await this.cache.set(
+        `category:${category.id}`,
+        category.toJSON(),
+        7200 // 2時間
+      );
+    }
+    
+    console.log('Cache warmup completed');
+  }
+}</code></pre>
+
+                <h3>5. データベース設定の最適化</h3>
+                <pre><code class="language-sql">-- PostgreSQL パフォーマンス設定
+-- postgresql.conf
+
+-- メモリ設定
+shared_buffers = '4GB'              -- 総メモリの25%程度
+effective_cache_size = '12GB'       -- 総メモリの75%程度
+work_mem = '64MB'                   -- ソート/ハッシュ操作用
+maintenance_work_mem = '512MB'      -- VACUUM, CREATE INDEX用
+
+-- チェックポイント設定
+checkpoint_timeout = '15min'
+checkpoint_completion_target = 0.9
+wal_buffers = '16MB'
+
+-- 並列処理
+max_parallel_workers_per_gather = 4
+max_parallel_workers = 8
+
+-- 統計情報
+default_statistics_target = 100
+random_page_cost = 1.1              -- SSDの場合</code></pre>
+
+                <pre><code class="language-javascript">// MongoDB パフォーマンス設定
+// mongod.conf
+{
+  "systemLog": {
+    "destination": "file",
+    "path": "/var/log/mongodb/mongod.log",
+    "logAppend": true
+  },
+  "storage": {
+    "dbPath": "/var/lib/mongodb",
+    "journal": {
+      "enabled": true
+    },
+    "wiredTiger": {
+      "engineConfig": {
+        "cacheSizeGB": 4,
+        "journalCompressor": "snappy"
+      },
+      "collectionConfig": {
+        "blockCompressor": "zstd"
+      }
+    }
+  },
+  "net": {
+    "bindIp": "0.0.0.0",
+    "maxIncomingConnections": 1000
+  },
+  "operationProfiling": {
+    "mode": "slowOp",
+    "slowOpThresholdMs": 100
+  }
+}</code></pre>
+            </section>
+
+            <!-- Best Practices -->
+            <section id="best-practices" class="tutorial-section">
+                <h2>ベストプラクティス</h2>
+                <p>データベース開発における重要な原則とベストプラクティスをまとめます。</p>
+
+                <div class="best-practices-grid">
+                    <div class="practice-item">
+                        <h3>1. セキュリティ</h3>
+                        <ul>
+                            <li>SQLインジェクション対策（パラメータ化クエリの使用）</li>
+                            <li>最小権限の原則に従ったユーザー権限設定</li>
+                            <li>接続の暗号化（SSL/TLS）</li>
+                            <li>機密データの暗号化</li>
+                            <li>定期的なセキュリティ監査</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="practice-item">
+                        <h3>2. パフォーマンス</h3>
+                        <ul>
+                            <li>適切なインデックスの設計と管理</li>
+                            <li>クエリの最適化とEXPLAIN分析</li>
+                            <li>接続プールの適切な設定</li>
+                            <li>キャッシュ戦略の実装</li>
+                            <li>定期的なパフォーマンス監視</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="practice-item">
+                        <h3>3. 可用性</h3>
+                        <ul>
+                            <li>レプリケーションの設定</li>
+                            <li>自動フェイルオーバーの実装</li>
+                            <li>定期的なバックアップとテスト</li>
+                            <li>災害復旧計画の策定</li>
+                            <li>ヘルスチェックの実装</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="practice-item">
+                        <h3>4. 保守性</h3>
+                        <ul>
+                            <li>明確な命名規則の採用</li>
+                            <li>スキーマのバージョン管理</li>
+                            <li>包括的なドキュメンテーション</li>
+                            <li>テスト環境の整備</li>
+                            <li>監視とアラートの設定</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3>まとめ</h3>
+                <p>このチュートリアルでは、Node.jsアプリケーションにおける主要なデータベース技術（MongoDB、PostgreSQL、Redis）の実践的な使用方法を学びました。適切なデータベースの選択、効率的な設計、パフォーマンスの最適化、そして信頼性の高い運用方法を理解することで、スケーラブルで堅牢なアプリケーションを構築できるようになります。</p>
+            </section>
+
+            <!-- Navigation -->
+            <div style="text-align: center; margin: 3rem 0;">
+                <a href="express-generator-tutorial.html" class="btn btn-outline-primary">
+                    <i class="fas fa-arrow-left"></i> Express Generator
+                </a>
+                <a href="index.html" class="btn btn-outline-primary">
+                    <i class="fas fa-home"></i> ホームへ戻る
+                </a>
+            </div>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer style="background: #2c3e50; color: white; padding: 2rem 0; margin-top: 2rem;">
+        <div class="container">
+            <div style="text-align: center;">
+                <div style="margin-bottom: 1rem;">
+                    <a href="index.html" style="color: white; text-decoration: none; margin: 0 1rem;">ホーム</a>
+                    <a href="nodejs-tutorial.html" style="color: white; text-decoration: none; margin: 0 1rem;">Node.js基礎</a>
+                    <a href="express-tutorial.html" style="color: white; text-decoration: none; margin: 0 1rem;">Express.js</a>
+                    <a href="express-generator-tutorial.html" style="color: white; text-decoration: none; margin: 0 1rem;">Express Generator</a>
+                    <a href="https://nodejs.org/" target="_blank" style="color: white; text-decoration: none; margin: 0 1rem;">Node.js 公式</a>
+                    <a href="https://expressjs.com/" target="_blank" style="color: white; text-decoration: none; margin: 0 1rem;">Express.js 公式</a>
+                </div>
+                <p style="margin: 0;">&copy; 2024 Node.js Tutorial. このチュートリアルは学習目的で作成されました。</p>
+                <p style="margin: 0.5rem 0 0 0;">
+                    <i class="fas fa-heart" style="color: #e74c3c;"></i> 
+                    Made with Node.js and Express.js
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" style="position: fixed; bottom: 20px; right: 20px; background: var(--primary-color); color: white; border: none; border-radius: 50%; width: 50px; height: 50px; cursor: pointer; box-shadow: var(--shadow); display: none;" id="backToTop">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    <script>
+        // Initialize Prism for syntax highlighting
+        document.addEventListener('DOMContentLoaded', function() {
+            Prism.highlightAll();
+            
+            // Back to top button functionality
+            const backToTopBtn = document.getElementById('backToTop');
+            
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 300) {
+                    backToTopBtn.style.display = 'block';
+                } else {
+                    backToTopBtn.style.display = 'none';
+                }
+            });
+            
+            // Mobile navigation toggle
+            const navToggle = document.querySelector('.nav-toggle');
+            const navMenu = document.querySelector('.nav-menu');
+            
+            if (navToggle && navMenu) {
+                navToggle.addEventListener('click', function() {
+                    navMenu.classList.toggle('active');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
